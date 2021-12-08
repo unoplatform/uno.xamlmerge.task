@@ -76,6 +76,8 @@ namespace Uno.UI.Tasks.BatchMerge
                 }
             }
 
+            Directory.CreateDirectory(Path.GetDirectoryName(MergedXamlFile));
+
             mergedDictionary.FinalizeXaml();
             filesWritten.Add(Utils.RewriteFileIfNecessary(MergedXamlFile, mergedDictionary.ToString()));
 

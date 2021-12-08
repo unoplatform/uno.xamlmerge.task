@@ -3,6 +3,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TestLibrary">
 
-	<x:String x:Key="TestLibrary_String">TestLibrary String</x:String>
+	<ResourceDictionary.MergedDictionaries>
+		<ResourceDictionary Source="ms-appx:///TestLibrary/Generated/mergedpages.xaml" />
+	</ResourceDictionary.MergedDictionaries>
 
 </ResourceDictionary>

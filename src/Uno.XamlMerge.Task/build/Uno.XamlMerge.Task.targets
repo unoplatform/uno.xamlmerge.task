@@ -5,12 +5,23 @@
 	<UsingTask TaskName="BatchMergeXaml_v0" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\$(Configuration)\netstandard2.0\Uno.XamlMerge.Task.v0.dll" Condition="exists('$(MSBuildThisFileDirectory)..\bin\$(Configuration)\netstandard2.0\Uno.XamlMerge.Task.v0.dll')" />
 
 	<PropertyGroup>
-		<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'==''">$(BaseIntermediateOutputPath)\mergedpages.xaml</XamlMergeOutputFile>
+		<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>
 	</PropertyGroup>
 
-	<Target Name="GenerateMergedXaml" BeforeTargets="BeforeBuild" Inputs="@(XamlMergeInput)" Outputs="$(XamlMergeOutputFile)">
+	<Target Name="GenerateMergedXaml" 
+					BeforeTargets="BeforeBuild" 
+					>
+		<!--Inputs="@(XamlMergeInput)"
+		Outputs="$(XamlMergeOutputFile)"-->
+
+		<ItemGroup>
+			<_FilteredXamlMergeInput 
+				Include="@(XamlMergeInput)"
+				Condition="'%(XamlMergeInput.FullPath)'!='$(XamlMergeOutputFile)'" />
+		</ItemGroup>
+
 		<BatchMergeXaml_v0
-			Pages="@(XamlMergeInput)"
+			Pages="@(_FilteredXamlMergeInput)"
 			MergedXamlFile="$(XamlMergeOutputFile)"
 			TlogReadFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.read.1u.tlog"
 			TlogWriteFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.write.1u.tlog" />
@@ -18,7 +29,19 @@
 		
 		<ItemGroup>
 			<Page Remove="@(XamlMergeInput)" />
-			<Page Include="$(XamlMergeOutputFile)" />
+
+			<!-- 
+			Include the generated file in Pages if not already present.
+			This can happen when building for the first time.
+			-->
+			<_additionalPages Include="@(Page)"
+												Condition="'%(Page.FullPath)'!='$(XamlMergeOutputFile)'"
+												KeepDuplicates="False" />
+
+			<Page Include="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)', '$(XamlMergeOutputFile)'))"
+						KeepDuplicates="False" />
+			<Page Include="@(_additionalPages)"
+						KeepDuplicates="False" />
 		</ItemGroup>
 	</Target>
 

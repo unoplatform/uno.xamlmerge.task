@@ -3,6 +3,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:TestLibrary">
 
-	<x:String x:Key="TestLibrary_String">TestLibrary String</x:String>
+	<x:String x:Key="TestLibrary_String02">TestLibrary String 02</x:String>
 
 </ResourceDictionary>

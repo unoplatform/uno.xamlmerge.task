@@ -21,19 +21,29 @@
     <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Inner1\ResourceDictionary2.xaml" />
     <None Remove="ResourceDictionary1.xaml" />
+    <None Remove="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <UpToDateCheckInput Remove="Inner1\ResourceDictionary2.xaml" />
     <UpToDateCheckInput Remove="ResourceDictionary1.xaml" />
+    <UpToDateCheckInput Remove="Themes\Generic.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Inner1\ResourceDictionary2.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="ResourceDictionary1.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Update="Themes\Generic.xaml">
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
 
 	<ItemGroup>
-		<XamlMergeInput Include="*.xaml" />
+		<XamlMergeInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml;Themes\Generic.xaml" />
 	</ItemGroup>
 
 	<Import Project="..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />

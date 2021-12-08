@@ -43,7 +43,7 @@ jobs:
       run: |
         $adjustedPackageVersion="${{ steps.gitversion.outputs.semVer }}".ToLower();
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        & $msbuild /r /p:Configuration=Release "/t:Build;Pack" /p:PackageVersion=$adjustedPackageVersion /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} -o .\artifacts src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
+        & $msbuild /r /p:Configuration=Release "/t:Build;Pack" /p:PackageVersion=$adjustedPackageVersion /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} "/p:PackageOutputPath=.\artifacts" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
 
     - name: Validate Test Projects
       run: |

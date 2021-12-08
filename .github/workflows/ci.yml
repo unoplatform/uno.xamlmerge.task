@@ -12,6 +12,10 @@ on:
       - main
       - release/**
 
+env:
+  UnoCheck_Version: '0.2.0-dev.361'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/bf3684e2ad725baa66da3573759129d6bb1d8817/manifests/uno.ui.manifest.json'
+
 jobs:
   build:
     name: Build
@@ -38,6 +42,12 @@ jobs:
       with:
         useConfigFile: true
         configFilePath: build/gitversion.yml
+
+    - run: |
+          & dotnet tool update --global uno.check --version ${{ env.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+          & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest ${{ env.UnoCheck_Manifest }}
+      name: Install .NET Workloads
+
 
     - name: Build - CI
       run: |

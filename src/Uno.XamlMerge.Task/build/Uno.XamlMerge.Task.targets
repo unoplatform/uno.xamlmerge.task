@@ -26,6 +26,12 @@
 			TlogReadFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.read.1u.tlog"
 			TlogWriteFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.write.1u.tlog" />
 		<Message Text="Merged resources XAML file was generated in $(XamlMergeOutputFile)" />
+
+	</Target>
+
+	<Target Name="_AdjustedMergedXamlItems"
+					BeforeTargets="GetCopyToOutputDirectoryItems"
+					AfterTargets="GenerateMergedXaml">
 		
 		<ItemGroup>
 			<Page Remove="@(XamlMergeInput)" />
@@ -43,6 +49,7 @@
 			<Page Include="@(_additionalPages)"
 						KeepDuplicates="False" />
 		</ItemGroup>
+
 	</Target>
 
 	

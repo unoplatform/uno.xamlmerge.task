@@ -5,6 +5,8 @@
 
 	<ResourceDictionary.MergedDictionaries>
 		<ResourceDictionary Source="ms-appx:///TestLibrary/Generated/mergedpages.xaml" />
+
 	</ResourceDictionary.MergedDictionaries>
 
+	<x:String x:Key="test01">test01</x:String>
 </ResourceDictionary>

@@ -46,5 +46,5 @@
 		<XamlMergeInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml;Themes\Generic.xaml" />
 	</ItemGroup>
 
-	<Import Project="..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
+	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
 </Project>

@@ -42,7 +42,7 @@ jobs:
     - name: Build - CI
       run: |
         $adjustedPackageVersion="${{ steps.gitversion.outputs.semVer }}".ToLower();
-        dotnet pack -c Release -p:PackageVersion=$adjustedPackageVersion -p:Version=${{ steps.gitversion.outputs.assemblySemVer }} -o .\artifacts src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
+        msbuild /r /p:Configuration=Release /t:Pack /p:PackageVersion=$adjustedPackageVersion /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} -o .\artifacts src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
 
     - name: Validate Test Projects
       run: |

@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+
+	<UsingTask TaskName="BatchMergeXaml_v0" AssemblyFile="..\tools\Uno.XamlMerge.Task.v0.dll" Condition="exists('..\tools\Uno.XamlMerge.Task.v0.dll')" />
+	<UsingTask TaskName="BatchMergeXaml_v0" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\$(Configuration)\netstandard2.0\Uno.XamlMerge.Task.v0.dll" Condition="exists('$(MSBuildThisFileDirectory)..\bin\$(Configuration)\netstandard2.0\Uno.XamlMerge.Task.v0.dll')" />
+
+	<PropertyGroup>
+		<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'==''">$(BaseIntermediateOutputPath)\mergedpages.xaml</XamlMergeOutputFile>
+	</PropertyGroup>
+
+	<Target Name="GenerateMergedXaml" BeforeTargets="BeforeBuild" Inputs="@(XamlMergeInput)" Outputs="$(XamlMergeOutputFile)">
+		<BatchMergeXaml_v0
+			Pages="@(XamlMergeInput)"
+			MergedXamlFile="$(XamlMergeOutputFile)"
+			TlogReadFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.read.1u.tlog"
+			TlogWriteFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.write.1u.tlog" />
+		<Message Text="Merged resources XAML file was generated in $(XamlMergeOutputFile)" />
+		
+		<ItemGroup>
+			<Page Remove="@(XamlMergeInput)" />
+			<Page Include="$(XamlMergeOutputFile)" />
+		</ItemGroup>
+	</Target>
+
+	
+</Project>

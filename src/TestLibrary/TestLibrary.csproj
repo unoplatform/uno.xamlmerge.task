@@ -1,0 +1,40 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.23">
+  <!--
+	Adding project references to this project requires some manual adjustments.
+	Please see https://github.com/unoplatform/uno/issues/3909 for more details.
+	-->
+  <PropertyGroup>
+    <TargetFrameworks>uap10.0.18362;netstandard2.0;net6.0-ios;net6.0-macos;net6.0-maccatalyst;net6.0-android</TargetFrameworks>
+    <!-- Ensures the .xr.xml files are generated in a proper layout folder -->
+    <GenerateLibraryLayout>true</GenerateLibraryLayout>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Uno.UI" Version="4.0.7" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+    <Compile Update="**\*.xaml.cs">
+      <DependentUpon>%(Filename)</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="ResourceDictionary1.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <UpToDateCheckInput Remove="ResourceDictionary1.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Update="ResourceDictionary1.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+
+	<ItemGroup>
+		<XamlMergeInput Include="*.xaml" />
+	</ItemGroup>
+
+	<Import Project="..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
+</Project>

@@ -8,7 +8,7 @@
 
   <Identity
     Name="2e9e4fc0-ef26-46ef-bfcf-20a2da4a748b"
-    Publisher="CN=jerome.laban"
+    Publisher="CN=uno platform"
     Version="1.0.0.0" />
 
   <mp:PhoneIdentity PhoneProductId="35e6fc36-a055-4643-960e-be464313d5bf" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>

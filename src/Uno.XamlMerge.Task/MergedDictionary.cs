@@ -339,10 +339,21 @@ namespace Uno.UI.Tasks.BatchMerge
                         {
                             string name = att.Name.Substring(6); // exclude "xmlns:"
                             string stardardName = GetStandardNamespace(name, att.Value);
+
+                            if (standardNamespaceDictionary.ContainsKey(stardardName))
+                            {
+                                throw new InvalidOperationException($"Namespace {stardardName} already exists");
+                            }
+
                             standardNamespaceDictionary.Add(stardardName, att.Value);
 
                             if (!name.Equals(stardardName))
                             {
+                                if (toBeReplacedDictionary.ContainsKey(name))
+                                {
+                                    throw new InvalidOperationException($"Namespace {name} already exists");
+                                }
+
                                 toBeReplacedDictionary.Add(name, stardardName);
                             }
                         }

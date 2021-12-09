@@ -9,6 +9,7 @@
 		<IsTool>true</IsTool>
 		<AssemblyName>Uno.XamlMerge.Task.v0</AssemblyName>
 		<PackageId>Uno.XamlMerge.Task</PackageId>
+		<Version>1.0.1</Version>
   </PropertyGroup>
 
 	<ItemGroup>

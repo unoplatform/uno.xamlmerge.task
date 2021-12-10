@@ -47,4 +47,12 @@
 	</ItemGroup>
 
 	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj">
+			<ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+			<UndefineProperties>TargetFramework</UndefineProperties>
+		</ProjectReference>
+	</ItemGroup>
 </Project>

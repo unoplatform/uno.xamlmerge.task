@@ -8,14 +8,13 @@
 		<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>
 	</PropertyGroup>
 
-	<Target Name="GenerateMergedXaml" 
-					BeforeTargets="BeforeBuild" 
-					>
+	<Target Name="GenerateMergedXaml"
+					BeforeTargets="_ComputeTargetFrameworkItems" Condition="'$(TargetFramework)' == ''">
 		<!--Inputs="@(XamlMergeInput)"
 		Outputs="$(XamlMergeOutputFile)"-->
 
 		<ItemGroup>
-			<_FilteredXamlMergeInput 
+			<_FilteredXamlMergeInput
 				Include="@(XamlMergeInput)"
 				Condition="'%(XamlMergeInput.FullPath)'!='$(XamlMergeOutputFile)'" />
 		</ItemGroup>
@@ -27,12 +26,12 @@
 			TlogWriteFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.write.1u.tlog" />
 		<Message Text="Merged resources XAML file was generated in $(XamlMergeOutputFile)" />
 
+		<CallTarget Targets="_AdjustedMergedXamlItems" />
 	</Target>
 
 	<Target Name="_AdjustedMergedXamlItems"
-					BeforeTargets="GetCopyToOutputDirectoryItems"
-					AfterTargets="GenerateMergedXaml">
-		
+					BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile">
+
 		<ItemGroup>
 			<Page Remove="@(XamlMergeInput)" />
 
@@ -52,5 +51,5 @@
 
 	</Target>
 
-	
+
 </Project>

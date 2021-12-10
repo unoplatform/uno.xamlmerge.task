@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -42,6 +43,8 @@ namespace Uno.UI.Tasks.BatchMerge
             var document = new XmlDocument();
             document.LoadXml(content);
 
+            MergeIgnorables(document);
+
             Dictionary<string, string> standardNamespaceDictionary = new Dictionary<string, string>();
             Dictionary<string, string> xmlnsReplacementDictionary = new Dictionary<string, string>();
 
@@ -59,6 +62,20 @@ namespace Uno.UI.Tasks.BatchMerge
                         AddNode(xmlNode, xmlnsReplacementDictionary);
                     }
                 }
+            }
+        }
+
+		private void MergeIgnorables(XmlDocument document)
+		{
+            var newIgnorablesAttribute = document.FirstChild.Attributes.OfType<XmlAttribute>().FirstOrDefault(a => a.LocalName == "Ignorable" && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
+
+            if (newIgnorablesAttribute is not null)
+            {
+                var mergedIgnorables = (_ignorablesAttribute?.Value ?? "")
+                    .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                    .Union(newIgnorablesAttribute.Value.Split(' '));
+
+                UpdateIgnorables(string.Join(" ", mergedIgnorables));
             }
         }
 
@@ -115,12 +132,26 @@ namespace Uno.UI.Tasks.BatchMerge
             mergedThemeDictionaryByKeyDictionary = new Dictionary<string, MergedDictionary>();
             namespaceList = new List<string>();
             this.parentDictionary = parentDictionary;
-
-            AddNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
-            // xmlElement.SetAttribute("Ignorable", "http://schemas.openxmlformats.org/markup-compatibility/2006", "ios android wasm skia");
         }
 
-        private void AddNamespace(string xmlnsString, string namespaceString)
+        private void UpdateIgnorables(string ignorables)
+		{
+            if (!string.IsNullOrWhiteSpace(ignorables))
+            {
+                if (_ignorablesAttribute == null)
+                {
+                    AddNamespace("mc", "http://schemas.openxmlformats.org/markup-compatibility/2006");
+                    xmlElement.SetAttribute("Ignorable", "http://schemas.openxmlformats.org/markup-compatibility/2006", "");
+
+                    _ignorablesAttribute = xmlElement.Attributes.OfType<XmlAttribute>().First(a => a.Name == "Ignorable");
+                }
+
+                _ignorablesAttribute.Value = ignorables;
+            }
+        }
+
+
+		private void AddNamespace(string xmlnsString, string namespaceString)
         {
             if (!namespaceList.Contains(xmlnsString))
             {
@@ -340,16 +371,16 @@ namespace Uno.UI.Tasks.BatchMerge
                             string name = att.Name.Substring(6); // exclude "xmlns:"
                             string stardardName = GetStandardNamespace(name, att.Value);
 
-                            if (standardNamespaceDictionary.ContainsKey(stardardName))
+                            if (standardNamespaceDictionary.TryGetValue(stardardName, out var ns) && ns != att.Value)
                             {
-                                throw new InvalidOperationException($"Namespace {stardardName} already exists");
+                                throw new InvalidOperationException($"Namespace {stardardName} already exists with a different value");
                             }
 
-                            standardNamespaceDictionary.Add(stardardName, att.Value);
+                            standardNamespaceDictionary[stardardName] = att.Value;
 
                             if (!name.Equals(stardardName))
                             {
-                                if (toBeReplacedDictionary.ContainsKey(name))
+                                if (toBeReplacedDictionary.TryGetValue(name, out var ns2) && ns2 != stardardName)
                                 {
                                     throw new InvalidOperationException($"Namespace {name} already exists");
                                 }
@@ -389,5 +420,6 @@ namespace Uno.UI.Tasks.BatchMerge
         private Dictionary<string, MergedDictionary> mergedThemeDictionaryByKeyDictionary;
         private List<string> namespaceList;
         private MergedDictionary parentDictionary;
-    }
+		private XmlAttribute _ignorablesAttribute;
+	}
 }

@@ -51,7 +51,7 @@ jobs:
 
     - name: Build - CI
       run: |
-        gci -r src\*.* | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.VersionSourceSha }}" }  | set-content $a }
+        gci -r -File src\*.* | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.VersionSourceSha }}" }  | set-content $a }
         $adjustedPackageVersion="${{ steps.gitversion.outputs.semVer }}".ToLower();
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
         & $msbuild /r /p:Configuration=Release "/t:Build;Pack" /p:PackageVersion=$adjustedPackageVersion /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} "/p:PackageOutputPath=.\artifacts" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj

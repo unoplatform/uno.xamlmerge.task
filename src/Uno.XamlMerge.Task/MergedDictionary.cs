@@ -81,6 +81,17 @@ namespace Uno.UI.Tasks.BatchMerge
 
         public void FinalizeXaml()
         {
+            if (mergedDictionaries.Count > 0)
+            {
+                var mergedDictionariesElement = owningDocument.CreateElement("ResourceDictionary.MergedDictionaries", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
+                xmlElement.AppendChild(mergedDictionariesElement);
+
+                foreach (var mergedDictionary in mergedDictionaries)
+                {
+                    mergedDictionariesElement.AppendChild(owningDocument.ImportNode(mergedDictionary, true));
+                }
+            }
+
             if (mergedThemeDictionaryByKeyDictionary.Keys.Count > 0)
             {
                 XmlElement themeDictionariesElement = owningDocument.CreateElement("ResourceDictionary.ThemeDictionaries", "http://schemas.microsoft.com/winfx/2006/xaml/presentation");
@@ -171,7 +182,14 @@ namespace Uno.UI.Tasks.BatchMerge
             node = owningDocument.ImportNode(node, true);
             ReplaceNamespacePrefix(node, xmlnsReplacementDictionary);
 
-            if (node.Name == "ResourceDictionary.ThemeDictionaries")
+            if (node.Name == "ResourceDictionary.MergedDictionaries")
+			{
+                foreach (var childNode in node.ChildNodes.OfType<XmlElement>())
+                {
+                    mergedDictionaries.Add(childNode);
+                }
+			}
+            else if (node.Name == "ResourceDictionary.ThemeDictionaries")
             {
                 // This will be a list of either ResourceDictionaries or comments.
                 // We'll figure out what the ResourceDictionaries' keys are,
@@ -419,6 +437,7 @@ namespace Uno.UI.Tasks.BatchMerge
         private Dictionary<string, int> nodeKeyToNodeListIndexDictionary;
         private Dictionary<string, MergedDictionary> mergedThemeDictionaryByKeyDictionary;
         private List<string> namespaceList;
+        private List<XmlElement> mergedDictionaries = new();
         private MergedDictionary parentDictionary;
 		private XmlAttribute _ignorablesAttribute;
 	}

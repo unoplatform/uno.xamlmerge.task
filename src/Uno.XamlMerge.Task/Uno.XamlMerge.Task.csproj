@@ -40,5 +40,16 @@
 		</PackageReference>
 		<PackageReference Include="Mono.Cecil" Version="0.11.3" PrivateAssets="all" />
 	</ItemGroup>
+	
+	<Target Name="_copyTasksBuildTime" AfterTargets="Build">
+		<ItemGroup>
+			<_unoTasksFiles Include="$(OutputPath)\*.*" />
+		</ItemGroup>
+		<!--
+		Copy the files to an alternal location, using deterministic build.
+		Don't fail the build if the file is locked
+		-->
+		<Copy SkipUnchangedFiles="true" SourceFiles="@(_unoTasksFiles)" DestinationFolder="$(OutputPath)\..\..\$(Configuration)_Shadow" Retries="1" RetryDelayMilliseconds="500" ContinueOnError="true" />
+	</Target>
 
 </Project>

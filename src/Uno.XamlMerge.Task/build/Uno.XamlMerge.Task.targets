@@ -2,7 +2,7 @@
 <Project>
 
 	<UsingTask TaskName="BatchMergeXaml_v0" AssemblyFile="..\tools\Uno.XamlMerge.Task.v0.dll" Condition="exists('..\tools\Uno.XamlMerge.Task.v0.dll')" />
-	<UsingTask TaskName="BatchMergeXaml_v0" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\$(Configuration)\netstandard2.0\Uno.XamlMerge.Task.v0.dll" Condition="exists('$(MSBuildThisFileDirectory)..\bin\$(Configuration)\netstandard2.0\Uno.XamlMerge.Task.v0.dll')" />
+	<UsingTask TaskName="BatchMergeXaml_v0" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\$(Configuration)_Shadow\Uno.XamlMerge.Task.v0.dll" Condition="exists('$(MSBuildThisFileDirectory)..\bin\$(Configuration)_Shadow\Uno.XamlMerge.Task.v0.dll')" />
 
 	<PropertyGroup>
 		<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>

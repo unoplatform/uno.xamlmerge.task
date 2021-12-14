@@ -94,7 +94,7 @@ jobs:
 
       - name: SignClient
         run: |
-          if ("${{ secrets.SIGN_CLIENT_USER }}" != "")
+          if ("${{ secrets.SIGN_CLIENT_USER }}" -ne "")
           {
             build\SignClient sign -i artifacts\*.nupkg -c build\SignClient.json -r "${{ secrets.SIGN_CLIENT_USER }}" -s "${{ secrets.SIGN_CLIENT_SECRET }}" -n "Uno.Check" -d "Uno.Check" -u "https://github.com/unoplatform/uno.check"
           }

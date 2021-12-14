@@ -10,6 +10,8 @@
 		<AssemblyName>Uno.XamlMerge.Task.v0</AssemblyName>
 		<PackageId>Uno.XamlMerge.Task</PackageId>
 		<Version>1.0.1</Version>
+		<PackageDescription>An msbuild task which enables the merging of WinUI XAML resource dictionaries into a single flat ResourceDictionary.</PackageDescription>
+		<PackageReadmeFile>..\..\README.md</PackageReadmeFile>
   </PropertyGroup>
 
 	<ItemGroup>

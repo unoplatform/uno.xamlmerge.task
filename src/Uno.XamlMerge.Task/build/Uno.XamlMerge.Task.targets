@@ -10,9 +10,6 @@
 
 	<Target Name="GenerateMergedXaml"
 					BeforeTargets="_ComputeTargetFrameworkItems" Condition="'$(TargetFramework)' == ''">
-		<!--Inputs="@(XamlMergeInput)"
-		Outputs="$(XamlMergeOutputFile)"-->
-
 		<ItemGroup>
 			<_FilteredXamlMergeInput
 				Include="@(XamlMergeInput)"

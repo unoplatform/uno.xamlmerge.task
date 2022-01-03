@@ -2,9 +2,9 @@
 
 	<PropertyGroup>
     <Authors>unoplatform</Authors>
-    <PackageProjectUrl>https://github.com/unoplatform/uno.extensions.logging</PackageProjectUrl>
+    <PackageProjectUrl>https://github.com/unoplatform/uno.xamlmerge.task</PackageProjectUrl>
     <PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/unoplatform/uno.extensions.logging</RepositoryUrl>
+    <RepositoryUrl>https://github.com/unoplatform/uno.xamlmerge.task</RepositoryUrl>
 		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
 		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) uno platform inc. - all rights reserved</Copyright>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>

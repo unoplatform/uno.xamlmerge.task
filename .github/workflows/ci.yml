@@ -44,7 +44,7 @@ jobs:
         configFilePath: build/gitversion.yml
 
     - run: |
-        npm install -g conventional-changelog-cli
+        npm install -g conventional-changelog-cli@2.2.2
         conventional-changelog -p angular -u -r 1 -o "build/changelog.md"
       name: 'Generate changelog.md'
 

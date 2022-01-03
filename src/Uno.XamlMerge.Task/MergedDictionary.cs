@@ -67,7 +67,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
 		private void MergeIgnorables(XmlDocument document)
 		{
-            var newIgnorablesAttribute = document.FirstChild.Attributes.OfType<XmlAttribute>().FirstOrDefault(a => a.LocalName == "Ignorable" && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
+            var newIgnorablesAttribute = document.FirstChild.Attributes?.OfType<XmlAttribute>().FirstOrDefault(a => a.LocalName == "Ignorable" && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
 
             if (newIgnorablesAttribute is not null)
             {

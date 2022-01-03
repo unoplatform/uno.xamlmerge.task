@@ -12,12 +12,14 @@
 		<Version>1.0.1</Version>
 		<PackageDescription>An msbuild task which enables the merging of WinUI XAML resource dictionaries into a single flat ResourceDictionary.</PackageDescription>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageReleaseNotes Condition="exists('..\..\build\changelog.md')">changelog.md</PackageReleaseNotes>
   </PropertyGroup>
 
 	<ItemGroup>
 		<None Include="build\_._" Pack="true" PackagePath="lib/$(TargetFramework)" />
 		<None Include="build\Uno.XamlMerge.Task.targets" Pack="true" PackagePath="build" />
 		<None Include="..\..\README.md" Pack="true" PackagePath="/" />
+		<None Include="..\..\build\changelog.md" Pack="true" PackagePath="/" Condition="exists('..\..\build\changelog.md')" />
 	</ItemGroup>
 	
 	<ItemGroup>

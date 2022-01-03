@@ -44,6 +44,11 @@ jobs:
         configFilePath: build/gitversion.yml
 
     - run: |
+        npm install -g conventional-changelog-cli
+        conventional-changelog -p angular -u -r 1 -o "build/changelog.md"
+      name: 'Generate changelog.md'
+
+    - run: |
           & dotnet tool update --global uno.check --version ${{ env.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
           & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest ${{ env.UnoCheck_Manifest }}
       name: Install .NET Workloads

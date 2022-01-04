@@ -67,7 +67,7 @@ namespace Uno.UI.Tasks.BatchMerge
             {
                 try
                 {
-                    mergedDictionary.MergeContent(File.ReadAllText(page));
+                    mergedDictionary.MergeContent(File.ReadAllText(page), page);
                 }
                 catch (Exception)
                 {

@@ -36,8 +36,11 @@ namespace Uno.UI.Tasks.BatchMerge
             return Utils.UnEscapeAmpersand(sw.ToString());
         }
 
-        public void MergeContent(String content)
+        public void MergeContent(String content, string filePath)
         {
+            var comment = owningDocument.CreateComment($"origin: {filePath}");
+            nodeList.Add(comment);
+
             content = Utils.EscapeAmpersand(content);
 
             var document = new XmlDocument();

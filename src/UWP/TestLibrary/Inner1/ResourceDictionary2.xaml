@@ -9,7 +9,7 @@
 					xmlns:wasm="http://uno.ui/wasm"
 					xmlns:macos="http://uno.ui/macos"
 					xmlns:skia="http://uno.ui/skia"
-					mc:Ignorable="d xamarin ios android macos wasm skia">
+					mc:Ignorable="d xamarin ios android macos wasm skia xamarin">
 
 	<ResourceDictionary.ThemeDictionaries>
 		<ResourceDictionary x:Key="Default">
@@ -26,4 +26,17 @@
 
 	<x:String x:Key="TestLibrary_String02">TestLibrary String 02</x:String>
 
+	<!-- TODO: ItemsControl should inject ItemsPresenter directly if no template is found. (Change this once template is materialized on Measure) -->
+	<xamarin:Style TargetType="ItemsControl">
+		<Setter Property="Template">
+			<Setter.Value>
+				<ControlTemplate TargetType="ItemsControl">
+					<ItemsPresenter Padding="{TemplateBinding Padding}" />
+				</ControlTemplate>
+			</Setter.Value>
+		</Setter>
+	</xamarin:Style>
+	
+	<x:String x:Key="TestLibrary_String03">TestLibrary String 02</x:String>
+	
 </ResourceDictionary>

@@ -236,7 +236,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 // the previous node we saw with this key, in order to have only one entry per key.
                 // if it's not, or if we haven't seen a previous node with this key, then we'll just
                 // add it to our list.
-                string nodeKey = GetKey(node);
+                string nodeKey = GetKey(node) + node.Prefix;
 
                 if (nodeKey.Length == 0 || !nodeKeyToNodeListIndexDictionary.ContainsKey(nodeKey))
                 {

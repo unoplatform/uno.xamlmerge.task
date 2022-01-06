@@ -48,5 +48,11 @@
 
 	</Target>
 
+	<!-- Support for multi-targeting -->
+	<Target Name="_GenerateMergedXaml"
+				DependsOnTargets="GenerateMergedXaml"
+				BeforeTargets="DispatchToInnerBuilds"
+				Condition="'$(TargetFramework)' == ''">
+	</Target>
 
 </Project>

@@ -14,7 +14,7 @@ Include the following block:
 
 ```xml
 <PropertyGroup>
-    <_Uno_XamlMerge_Task_Version></_Uno_XamlMerge_Task_Version>
+    <_Uno_XamlMerge_Task_Version>1.0.0</_Uno_XamlMerge_Task_Version>
 </PropertyGroup>
 <ItemGroup>
     <PackageReference Include="Uno.XamlMerge.Task" Version="$(_Uno_XamlMerge_Task_Version)" />
@@ -32,7 +32,7 @@ Then add the following block at the end your project library:
 
 ```xml
 <Import Project="$(NuGetPackageRoot)uno.xamlmerge.task\$(_Uno_XamlMerge_Task_Version)\build\Uno.XamlMerge.Task.targets"
-        Condition="'$(TargetFramework)' == ''" />
+        Condition="'$(TargetFramework)' == '' and exists('$(NuGetPackageRoot)\uno.xamlmerge.task\$(_Uno_XamlMerge_Task_Version)')" />
 ```
 
 The generated file is called `Generated\mergedpages.xaml` by default, but can be overriden as follows:

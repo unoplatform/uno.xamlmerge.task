@@ -28,11 +28,11 @@ Then select the resource dictionaries to be merged:
 </ItemGroup>
 ```
 
-Then add the following block at the end your project library:
+Then add the following block at the end your project library or app:
 
 ```xml
 <Import Project="$(NuGetPackageRoot)uno.xamlmerge.task\$(_Uno_XamlMerge_Task_Version)\build\Uno.XamlMerge.Task.targets"
-        Condition="'$(TargetFramework)' == '' and exists('$(NuGetPackageRoot)\uno.xamlmerge.task\$(_Uno_XamlMerge_Task_Version)')" />
+        Condition="'$(TargetFramework)' == '' and '$(TargetFrameworks)'!='' and exists('$(NuGetPackageRoot)\uno.xamlmerge.task\$(_Uno_XamlMerge_Task_Version)')" />
 ```
 
 The generated file is called `Generated\mergedpages.xaml` by default, but can be overriden as follows:

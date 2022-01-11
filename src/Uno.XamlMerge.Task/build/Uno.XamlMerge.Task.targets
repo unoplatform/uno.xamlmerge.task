@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<Target Name="GenerateMergedXaml"
-					BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" Condition="'$(TargetFramework)' == '' or '$(TargetFrameworks)'==''">
+					BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" Condition="('$(TargetFramework)' == '' or '$(TargetFrameworks)'=='') and ('$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true')">
 		<ItemGroup>
 			<_FilteredXamlMergeInput
 				Include="@(XamlMergeInput)"

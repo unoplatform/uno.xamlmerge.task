@@ -144,7 +144,7 @@ namespace Uno.UI.Tasks.BatchMerge
             nodeListNodesToIgnore = new List<int>();
             nodeKeyToNodeListIndexDictionary = new Dictionary<string, int>();
             mergedThemeDictionaryByKeyDictionary = new Dictionary<string, MergedDictionary>();
-            namespaceList = new List<string>();
+            knownNamespaces = new();
             this.parentDictionary = parentDictionary;
         }
 
@@ -167,11 +167,20 @@ namespace Uno.UI.Tasks.BatchMerge
 
 		private void AddNamespace(string xmlnsString, string namespaceString)
         {
-            if (!namespaceList.Contains(xmlnsString))
+            if (!knownNamespaces.TryGetValue(xmlnsString, out var existingNamespaceString))
             {
                 xmlElement.SetAttribute("xmlns:" + xmlnsString, namespaceString);
-                namespaceList.Add(xmlnsString);
+                knownNamespaces.Add(xmlnsString, namespaceString);
             }
+			else
+			{
+                if(existingNamespaceString != namespaceString)
+				{
+                    throw new InvalidOperationException(
+                        $"The XML namespace [{xmlnsString}] with the value [{namespaceString}] is different than the already defined value [{existingNamespaceString}]. " +
+						$"Make sure to align all namespace defintions to the same values across merged files.");
+				}
+			}
         }
 
         private void AddNode(XmlNode node, Dictionary<string, string> xmlnsReplacementDictionary)
@@ -440,7 +449,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
         private Dictionary<string, int> nodeKeyToNodeListIndexDictionary;
         private Dictionary<string, MergedDictionary> mergedThemeDictionaryByKeyDictionary;
-        private List<string> namespaceList;
+        private Dictionary<string, string> knownNamespaces;
         private List<XmlElement> mergedDictionaries = new();
         private MergedDictionary parentDictionary;
 		private XmlAttribute _ignorablesAttribute;

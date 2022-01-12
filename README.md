@@ -24,9 +24,11 @@ Include the following block:
 Then select the resource dictionaries to be merged:
 ```xml
 <ItemGroup>
-    <XamlMergeInput Include="Styles\**\*.xaml" />
+    <XamlMergeInput Include="Styles\**\*.xaml" Exclude="Styles\Generic.xaml" />
 </ItemGroup>
 ```
+
+> Note: The `Exclude` portion is only needed if some of your dictionaries still need to be referenced explicitly as some libraries require valid full path, such as [Uno.Themes](https://github.com/unoplatform/uno.themes).
 
 Then add the following block at the end your project library or app:
 

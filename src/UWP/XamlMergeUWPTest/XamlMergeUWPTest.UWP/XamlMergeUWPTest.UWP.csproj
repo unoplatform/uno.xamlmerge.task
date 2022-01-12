@@ -14,7 +14,7 @@
     <PackageReference Include="Uno.UI" Version="4.0.7" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="5.0.0" />
-    <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.0-dev.7" />
+    <PackageReference Include="Uno.Core.Extensions.Logging.Singleton" Version="4.0.1" />
   </ItemGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -34,7 +34,7 @@
     <PackageCertificateKeyFile>XamlMergeUWPTest.UWP_TemporaryKey.pfx</PackageCertificateKeyFile>
     <PackageCertificateThumbprint>76F0655907F6860CA663D3E1FED3FECF3EC25480</PackageCertificateThumbprint>
     <AppxPackageSigningEnabled>False</AppxPackageSigningEnabled>
-		<AppxPackageValidationEnabled>False</AppxPackageValidationEnabled>
+    <AppxPackageValidationEnabled>False</AppxPackageValidationEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -143,6 +143,7 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <None Include="xamlmerge.targets" />
     <None Include="XamlMergeUWPTest.UWP_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,12 @@
     <Content Include="Assets\StoreLogo.png" />
     <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Properties\Default.rd.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Generated\mergedpages.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="..\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems" Label="Shared" />
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
@@ -166,4 +173,5 @@
 	<Target Name="AfterBuild">
 	</Target>
 	-->
+  <Import Project="XamlMerge.targets" />
 </Project>

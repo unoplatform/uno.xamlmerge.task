@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project>
+	
+	<ItemGroup>
+		<XamlMergeInput Include="..\XamlMergeUWPTest.Shared\Styles\**\*.xaml" />
+	</ItemGroup>
+
+	<Import Project="..\..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
+</Project>

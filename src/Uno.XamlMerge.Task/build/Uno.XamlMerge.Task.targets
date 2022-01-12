@@ -9,7 +9,7 @@
 	</PropertyGroup>
 
 	<Target Name="GenerateMergedXaml"
-					BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" Condition="'$(TargetFramework)' == '' or '$(TargetFrameworks)'==''">
+					BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" Condition="('$(TargetFramework)' == '' or '$(TargetFrameworks)'=='') and ('$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true')">
 		<ItemGroup>
 			<_FilteredXamlMergeInput
 				Include="@(XamlMergeInput)"
@@ -37,11 +37,15 @@
 			This can happen when building for the first time.
 			-->
 			<_additionalPages Include="@(Page)"
-												Condition="'%(Page.FullPath)'!='$(XamlMergeOutputFile)'"
+												Condition="'%(Page.FullPath)'!=$([System.IO.Path]::GetFullPath('$(XamlMergeOutputFile)'))"
 												KeepDuplicates="False" />
+			
+			<_mergeOutputInluded Include="@(Page)"
+														Condition="'%(Page.FullPath)'==$([System.IO.Path]::GetFullPath('$(XamlMergeOutputFile)'))" />
 
 			<Page Include="$([MSBuild]::MakeRelative('$(MSBuildProjectDirectory)', '$(XamlMergeOutputFile)'))"
-						KeepDuplicates="False" />
+						KeepDuplicates="False"
+						Condition="'@(_mergeOutputInluded)'==''"/>
 			<Page Include="@(_additionalPages)"
 						KeepDuplicates="False" />
 		</ItemGroup>

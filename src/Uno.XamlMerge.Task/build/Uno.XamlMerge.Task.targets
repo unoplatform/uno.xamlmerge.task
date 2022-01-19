@@ -17,6 +17,7 @@
 		</ItemGroup>
 
 		<BatchMergeXaml_v0
+			ProjectFullPath="$(MSBuildProjectFullPath)"
 			Pages="@(_FilteredXamlMergeInput)"
 			MergedXamlFile="$(XamlMergeOutputFile)"
 			TlogReadFilesOutputPath="$(IntermediateOutputPath)\XamlMerge.read.1u.tlog"

@@ -8,85 +8,95 @@ using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
 namespace Uno.UI.Tasks.BatchMerge
 {
-    public class BatchMergeXaml_v0 : CustomTask
-    {
-        [Required]
-        public ITaskItem[] Pages { get; set; }
+	public class BatchMergeXaml_v0 : CustomTask
+	{
+		[Required]
+		public ITaskItem[] Pages { get; set; }
 
-        [Required]
-        public string MergedXamlFile { get; set; }
+		[Required]
+		public string MergedXamlFile { get; set; }
 
-        [Required]
-        public string TlogReadFilesOutputPath { get; set; }
+		[Required]
+		public string ProjectFullPath { get; set; }
 
-        [Required]
-        public string TlogWriteFilesOutputPath { get; set; }
+		[Required]
+		public string TlogReadFilesOutputPath { get; set; }
 
-        [Output]
-        public string[] FilesWritten
-        {
-            get { return filesWritten.ToArray(); }
-        }
+		[Required]
+		public string TlogWriteFilesOutputPath { get; set; }
 
-        private List<string> filesWritten = new List<string>();
+		[Output]
+		public string[] FilesWritten
+		{
+			get { return filesWritten.ToArray(); }
+		}
 
-        public override bool Execute()
-        {
-            MergedDictionary mergedDictionary = MergedDictionary.CreateMergedDicionary();
-            List<string> pages = new List<string>();
+		private List<string> filesWritten = new List<string>();
 
-            if (Pages != null)
-            {
-                foreach (ITaskItem pageItem in Pages)
-                {
-                    string page = pageItem.ItemSpec;
-                    if (File.Exists(page))
-                    {
-                        pages.Add(page);
-                    }
-                    else
-                    {
-                        LogError($"Can't find page {page}!");
-                    }
-                }
-            }
+		public override bool Execute()
+		{
+			MergedDictionary mergedDictionary = MergedDictionary.CreateMergedDicionary();
+			List<string> pages = new List<string>();
 
-            if (HasLoggedErrors)
-            {
-                return false;
-            }
+			if (Pages != null)
+			{
+				foreach (ITaskItem pageItem in Pages)
+				{
+					string page = pageItem.ItemSpec;
+					if (File.Exists(page))
+					{
+						pages.Add(page);
+					}
+					else
+					{
+						LogError($"Can't find page {page}!");
+					}
+				}
+			}
 
-            LogMessage($"Merging XAML files into {MergedXamlFile}...");
+			if (HasLoggedErrors)
+			{
+				return false;
+			}
 
-            foreach (string page in pages)
-            {
-                try
-                {
-                    mergedDictionary.MergeContent(File.ReadAllText(page), page);
-                }
-                catch (Exception)
-                {
-                    LogError($"Exception found when merging page {page}!");
-                    throw;
-                }
-            }
+			LogMessage($"Merging XAML files into {MergedXamlFile}...");
 
-            Directory.CreateDirectory(Path.GetDirectoryName(MergedXamlFile));
-            Directory.CreateDirectory(Path.GetDirectoryName(TlogReadFilesOutputPath));
-            Directory.CreateDirectory(Path.GetDirectoryName(TlogWriteFilesOutputPath));
+			var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(ProjectFullPath));
 
-            mergedDictionary.FinalizeXaml();
-            filesWritten.Add(Utils.RewriteFileIfNecessary(MergedXamlFile, mergedDictionary.ToString()));
+			foreach (string page in pages)
+			{
+				try
+				{
+					mergedDictionary.MergeContent(
+						content: File.ReadAllText(page),
+						filePath: Path.GetFullPath(page)
+							.Replace(projectBasePath, "")
+							.TrimStart(Path.DirectorySeparatorChar));
+				}
+				catch (Exception)
+				{
+					LogError($"Exception found when merging page {page}!");
+					throw;
+				}
+			}
 
-            File.WriteAllLines(TlogReadFilesOutputPath, Pages.Select(page => page.ItemSpec));
-            File.WriteAllLines(TlogWriteFilesOutputPath, FilesWritten);
+			Directory.CreateDirectory(Path.GetDirectoryName(MergedXamlFile));
+			Directory.CreateDirectory(Path.GetDirectoryName(TlogReadFilesOutputPath));
+			Directory.CreateDirectory(Path.GetDirectoryName(TlogWriteFilesOutputPath));
 
-            return !HasLoggedErrors;
-        }
-    }
+			mergedDictionary.FinalizeXaml();
+			filesWritten.Add(Utils.RewriteFileIfNecessary(MergedXamlFile, mergedDictionary.ToString()));
+
+			File.WriteAllLines(TlogReadFilesOutputPath, Pages.Select(page => page.ItemSpec));
+			File.WriteAllLines(TlogWriteFilesOutputPath, FilesWritten);
+
+			return !HasLoggedErrors;
+		}
+	}
 }

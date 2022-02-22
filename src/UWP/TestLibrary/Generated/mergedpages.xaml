@@ -14,6 +14,13 @@
   </ResourceDictionary.ThemeDictionaries>
   <!--origin: Inner1\Colors.xaml-->
   <x:String x:Key="TestLibrary_String02">TestLibrary String 02</x:String>
+  <!--origin: Inner1\ImplicitConflict.xaml-->
+  <Style x:Key="Button" TargetType="TextBlock">
+    <Setter Property="FontSize" Value="12" />
+  </Style>
+  <Style TargetType="Button">
+    <Setter Property="FontSize" Value="24" />
+  </Style>
   <!--origin: Inner1\ResourceDictionary2.xaml-->
   <xamarin:Style TargetType="ItemsControl">
     <Setter Property="Template">

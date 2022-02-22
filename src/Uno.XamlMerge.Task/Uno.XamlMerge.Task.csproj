@@ -1,25 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 		<LangVersion>10.0</LangVersion>
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<IsTool>true</IsTool>
 		<AssemblyName>Uno.XamlMerge.Task.v0</AssemblyName>
 		<PackageId>Uno.XamlMerge.Task</PackageId>
 		<Version>1.0.1</Version>
 		<PackageDescription>An msbuild task which enables the merging of WinUI XAML resource dictionaries into a single flat ResourceDictionary.</PackageDescription>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-  </PropertyGroup>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<None Include="build\_._" Pack="true" PackagePath="lib/$(TargetFramework)" />
 		<None Include="build\Uno.XamlMerge.Task.targets" Pack="true" PackagePath="build" />
 		<None Include="..\..\README.md" Pack="true" PackagePath="/" />
 	</ItemGroup>
-	
+
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Build">
 			<Version>15.4.8</Version>
@@ -43,7 +43,7 @@
 		</PackageReference>
 		<PackageReference Include="Mono.Cecil" Version="0.11.3" PrivateAssets="all" />
 	</ItemGroup>
-	
+
 	<Target Name="_copyTasksBuildTime" AfterTargets="Build">
 		<ItemGroup>
 			<_unoTasksFiles Include="$(OutputPath)\*.*" />

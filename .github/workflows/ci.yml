@@ -54,18 +54,52 @@ jobs:
       name: Install .NET Workloads
 
 
+    - name: Adjust msbuild task name
+      run: |
+        cd src
+        gci -r -File -Include *.cs,*.targets,*.props | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.VersionSourceSha }}" }  | set-content $a }
+
     - name: Build - CI
       run: |
-        gci -r -File src\Uno.XamlMerge.Task\*.* | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.VersionSourceSha }}" }  | set-content $a }
+        gci -r -File -Include src\*.cs,src\*.targets,src\*.props | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.VersionSourceSha }}" }  | set-content $a }
         $adjustedPackageVersion="${{ steps.gitversion.outputs.semVer }}".ToLower();
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
         & $msbuild /r /p:Configuration=Release /nr:false "/t:Build;Pack" /p:PackageVersion=$adjustedPackageVersion /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} "/p:PackageOutputPath=$env:GITHUB_WORKSPACE\artifacts" "/p:PackageReleaseNotesFile=$env:GITHUB_WORKSPACE\build\changelog.md" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
+
+    - name: Run Unit Tests
+      run: |
+        cd src\Uno.XamlMerge.Tests
+        dotnet test
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v2
       with:
         name: NuGet
         path: .\artifacts
+
+  validate:
+    name: Validate Sample App
+    runs-on: windows-2022
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET Core v6
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.100'
+
+    - run: |
+          & dotnet tool update --global uno.check --version ${{ env.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+          & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest ${{ env.UnoCheck_Manifest }}
+      name: Install .NET Workloads
+
+    - name: Build task project
+      run: |
+        cd src\Uno.XamlMerge.Task
+        dotnet build -c Release
 
     - name: Validate Test Projects
       run: |

@@ -345,7 +345,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 {
                     if (attribute.Name == "TargetType")
                     {
-                        key = attribute.Value;
+                        key = "type:" + attribute.Value;
                         break;
                     }
                 }

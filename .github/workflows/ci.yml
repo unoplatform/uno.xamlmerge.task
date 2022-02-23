@@ -77,10 +77,29 @@ jobs:
         name: NuGet
         path: .\artifacts
 
+  validate:
+    name: Validate Sample App
+    runs-on: windows-2022
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+    
+    - name: Setup .NET Core v6
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.100'
+
+    - run: |
+          & dotnet tool update --global uno.check --version ${{ env.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
+          & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest ${{ env.UnoCheck_Manifest }}
+      name: Install .NET Workloads
+
     - name: Validate Test Projects
       run: |
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        & $msbuild /m /nr:false /r "/t:clean;build" /p:Configuration=Release src\Uno.XamlMerge.Task.sln /p:AppxPackageSigningEnabled=false
+        & $msbuild /m /nr:false /r /p:Configuration=Release src\Uno.XamlMerge.Task.sln /p:AppxPackageSigningEnabled=false
 
   publish:
     name: Publish

@@ -96,6 +96,11 @@ jobs:
           & uno-check -v --ci --non-interactive --fix --skip xcode --skip gtk3 --skip vswin --skip vsmac --manifest ${{ env.UnoCheck_Manifest }}
       name: Install .NET Workloads
 
+    - name: Build task project
+      run: |
+        cd src\Uno.XamlMerge.Task
+        dotnet build
+
     - name: Validate Test Projects
       run: |
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe

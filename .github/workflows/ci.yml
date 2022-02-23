@@ -99,7 +99,7 @@ jobs:
     - name: Build task project
       run: |
         cd src\Uno.XamlMerge.Task
-        dotnet build
+        dotnet build -c Release
 
     - name: Validate Test Projects
       run: |

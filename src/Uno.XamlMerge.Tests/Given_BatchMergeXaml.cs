@@ -31,6 +31,16 @@ namespace Uno.XamlMerge.Tests
         }
 
         [TestMethod]
+        public void When_Duplicate_Keys_Different_Namespace_Single_Input()
+        {
+            var task = CreateMerger();
+
+            Assert.IsTrue(task.Execute());
+
+            ValidateOutput(task);
+        }
+
+        [TestMethod]
         public void When_Duplicate_Keys_Different_Namespace_Multiple_Input()
         {
             var task = CreateMerger();

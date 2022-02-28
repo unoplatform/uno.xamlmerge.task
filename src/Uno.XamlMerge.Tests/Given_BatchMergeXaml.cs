@@ -30,6 +30,16 @@ namespace Uno.XamlMerge.Tests
             ValidateOutput(task);
         }
 
+        [TestMethod]
+        public void When_Duplicate_Keys_Different_Namespace_Multiple_Input()
+        {
+            var task = CreateMerger();
+
+            Assert.IsTrue(task.Execute());
+
+            ValidateOutput(task);
+        }
+
         private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
         {
             var basePath = GetBasePath(testName);

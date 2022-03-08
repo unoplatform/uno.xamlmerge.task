@@ -50,6 +50,16 @@ namespace Uno.XamlMerge.Tests
             ValidateOutput(task);
         }
 
+        [TestMethod]
+        public void When_Duplicate_Keys_on_Theme_Resources()
+        {
+            var task = CreateMerger();
+
+            Assert.IsTrue(task.Execute());
+
+            ValidateOutput(task);
+        }
+
         private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
         {
             var basePath = GetBasePath(testName);

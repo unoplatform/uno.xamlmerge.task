@@ -1,0 +1,9 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="wasm skia" xmlns:wasm="http://uno.ui/wasm" xmlns:skia="http://uno.ui/skia" xmlns:local="using:TestLibrary" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<!--origin: When_Duplicate_Keys_Different_Namespace_Single_Input\Input_Dictionary.xml-->
+	<wasm:Style x:Key="DefaultButtonStyle" TargetType="Button">
+		<Setter Property="FontSize" Value="12" />
+	</wasm:Style>
+	<skia:Style x:Key="DefaultButtonStyle" TargetType="Button">
+		<Setter Property="FontSize" Value="24" />
+	</skia:Style>
+</ResourceDictionary>

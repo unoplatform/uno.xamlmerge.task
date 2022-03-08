@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="netstdref wasm skia ios" xmlns:netstdref="http://uno.ui/netstdref" xmlns:local="using:TestLibrary" xmlns:wasm="http://uno.ui/wasm" xmlns:skia="http://uno.ui/skia" xmlns:ios="http://uno.ui/ios" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<!--origin: When_Duplicate_Keys_Different_Namespace_Multiple_Input\Input_A_Ignorables.xml-->
+	<!--origin: When_Duplicate_Keys_Different_Namespace_Multiple_Input\Input_Dictionary_1.xml-->
+	<wasm:Style x:Key="DefaultButtonStyle" TargetType="Button">
+		<Setter Property="FontSize" Value="12" />
+	</wasm:Style>
+	<skia:Style x:Key="DefaultButtonStyle" TargetType="Button">
+		<Setter Property="FontSize" Value="24" />
+	</skia:Style>
+	<!--origin: When_Duplicate_Keys_Different_Namespace_Multiple_Input\Input_Dictionary_2.xml-->
+	<ios:Style x:Key="DefaultButtonStyle" TargetType="Button">
+		<Setter Property="FontSize" Value="14" />
+	</ios:Style>
+</ResourceDictionary>

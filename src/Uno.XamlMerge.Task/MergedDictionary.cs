@@ -70,7 +70,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
 		private void MergeIgnorables(XmlDocument document)
 		{
-            var newIgnorablesAttribute = document.FirstChild.Attributes?.OfType<XmlAttribute>().FirstOrDefault(a => a.LocalName == "Ignorable" && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
+            var newIgnorablesAttribute = FindNode(document, "ResourceDictionary")?.Attributes?.OfType<XmlAttribute>().FirstOrDefault(a => string.Equals("Ignorable",a.LocalName, StringComparison.OrdinalIgnoreCase) && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
 
             if (newIgnorablesAttribute is not null)
             {
@@ -435,6 +435,24 @@ namespace Uno.UI.Tasks.BatchMerge
             {
                 parentDictionary.RemoveAncestorNodesWithKey(key);
             }
+        }
+
+        private static XmlNode FindNode(XmlDocument document, string name)
+        {
+            if (string.IsNullOrEmpty(name) || document?.ChildNodes.Count == 0)
+            {
+                return null;
+            }
+
+            foreach (XmlNode node in document.ChildNodes)
+            {
+                if (node.Name == name)
+                {
+                    return node;
+                }
+            }
+
+            return null;
         }
 
         private XmlElement xmlElement;

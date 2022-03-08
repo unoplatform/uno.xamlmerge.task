@@ -51,7 +51,7 @@ namespace Uno.XamlMerge.Tests
         }
 
         [TestMethod]
-        public void When_Duplicate_Keys_on_Theme_Resources()
+        public void When_Duplicate_Keys_on_Theme_Resources_And_Comments_As_FirstNode()
         {
             var task = CreateMerger();
 

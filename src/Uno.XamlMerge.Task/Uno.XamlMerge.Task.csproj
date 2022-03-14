@@ -27,7 +27,7 @@
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Build.Framework">
-			<Version>15.4.8</Version>
+			<Version>17.1.0</Version>
 			<ExcludeAssets>runtime</ExcludeAssets>
 			<PrivateAssets>all</PrivateAssets>
 		</PackageReference>

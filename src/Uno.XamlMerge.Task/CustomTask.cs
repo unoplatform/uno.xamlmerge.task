@@ -15,7 +15,7 @@ namespace Uno.UI.Tasks.BatchMerge
 {
     public abstract class CustomTask : Microsoft.Build.Utilities.Task
     {
-        protected bool HasLoggedErrors
+        internal protected bool HasLoggedErrors
         {
             get
             {
@@ -32,7 +32,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
         private bool hasLoggedErrors = false;
 
-        protected void LogMessage(string message)
+        internal protected void LogMessage(string message)
         {
             if (BuildEngine != null)
             {
@@ -44,12 +44,12 @@ namespace Uno.UI.Tasks.BatchMerge
             }
         }
 
-        protected void LogWarning(string message)
+        internal protected void LogWarning(string message)
         {
             LogWarning(string.Empty, string.Empty, string.Empty, string.Empty, -1, -1, message);
         }
 
-        protected void LogWarning(string subcategory, string code, string helpKeyword, string file, int lineNumber, int columnNumber, string message)
+        internal protected void LogWarning(string subcategory, string code, string helpKeyword, string file, int lineNumber, int columnNumber, string message)
         {
             if (BuildEngine != null)
             {
@@ -61,12 +61,12 @@ namespace Uno.UI.Tasks.BatchMerge
             }
         }
 
-        protected void LogError(string message)
+        internal protected void LogError(string message)
         {
             LogError(string.Empty, string.Empty, string.Empty, string.Empty, -1, -1, message);
         }
 
-        protected void LogError(string subcategory, string code, string helpKeyword, string file, int lineNumber, int columnNumber, string message)
+        internal protected void LogError(string subcategory, string code, string helpKeyword, string file, int lineNumber, int columnNumber, string message)
         {
             if (BuildEngine != null)
             {

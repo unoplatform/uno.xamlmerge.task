@@ -57,6 +57,24 @@ Otherwise, the generated file can be referenced as follows:
 </ResourceDictionary>
 ```
 
+## Multiple generated files
+There are scenarios where placing groups of XAML files in separate merged file are useful, particularly when IL Linking must be used.
+
+In this case, the project file must be defined as follows:
+```xml
+<ItemGroup>
+    <!-- Output files -->
+    <XamlMergeOutputFiles Include="Generated\MergedPart1.xaml"  />
+    <XamlMergeOutputFiles Include="Generated\MergedPart2.xaml"  />
+
+    <!-- Input files, with the `MergeFile` metadata -->
+    <XamlMergeInput Include="Styles\Part1\**\*.xaml" Exclude="Styles\Generic.xaml" MergeFile="MergedPart1.xaml" />
+    <XamlMergeInput Include="Styles\Part2\**\*.xaml" Exclude="Styles\Generic.xaml" MergeFile="MergedPart2.xaml" />
+</ItemGroup>
+```
+
+In this case, the `XamlMergeOutputFile` cannot be used, as the `XamlMergeOutputFiles` is defined.
+
 ## Troubleshooting
 - Make sure that all namespaces definitions across files are of the same values. (e.g. `xlmns:ns1="http://site1"` and `xlmns:ns1="http://site2"` in two different files will fail)
 - If you include the same resource dictionary (e.g. Colors.xaml) file in multiple merged files (generally used to have a file for custom brushes and colors), you can remove those multiple inclusions.

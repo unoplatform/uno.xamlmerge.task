@@ -25,17 +25,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlMergeUWPTest.Wasm", "UW
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XamlMergeUWPTest.Skia.Gtk", "UWP\XamlMergeUWPTest\XamlMergeUWPTest.Skia.Gtk\XamlMergeUWPTest.Skia.Gtk.csproj", "{78CF883B-CACB-412F-9571-96211E2E7F7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uno.XamlMerge.Tests", "Uno.XamlMerge.Tests\Uno.XamlMerge.Tests.csproj", "{4D530D82-BD72-4D58-969C-2A8BDCD876F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Uno.XamlMerge.Tests", "Uno.XamlMerge.Tests\Uno.XamlMerge.Tests.csproj", "{4D530D82-BD72-4D58-969C-2A8BDCD876F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestLibrarySingleFile", "UWP\TestLibrarySingleFile\TestLibrarySingleFile.csproj", "{394950DC-7CDF-42FF-AAF0-03BBAB41953A}"
 EndProject
 Global
-	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{2e9e4fc0-ef26-46ef-bfcf-20a2da4a748b}*SharedItemsImports = 4
-		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
-		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{78cf883b-cacb-412f-9571-96211e2e7f7e}*SharedItemsImports = 5
-		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{ae79650a-b18b-4229-b167-adbcac2b9679}*SharedItemsImports = 5
-		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{f3adab09-f459-407b-8920-45ec1cfc7040}*SharedItemsImports = 4
-		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{f9497365-f492-4027-be58-61521ee747ac}*SharedItemsImports = 4
-	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
 		Ad-Hoc|ARM = Ad-Hoc|ARM
@@ -571,6 +565,62 @@ Global
 		{4D530D82-BD72-4D58-969C-2A8BDCD876F2}.Release|x64.Build.0 = Release|Any CPU
 		{4D530D82-BD72-4D58-969C-2A8BDCD876F2}.Release|x86.ActiveCfg = Release|Any CPU
 		{4D530D82-BD72-4D58-969C-2A8BDCD876F2}.Release|x86.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|Any CPU.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|Any CPU.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|ARM.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|ARM.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|ARM64.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|ARM64.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|iPhone.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|iPhone.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|x64.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|x64.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|x86.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Ad-Hoc|x86.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|Any CPU.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|Any CPU.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|ARM.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|ARM.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|ARM64.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|ARM64.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|iPhone.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|iPhone.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|x64.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|x64.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|x86.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.AppStore|x86.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|ARM.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|x64.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Debug|x86.Build.0 = Debug|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|ARM.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|ARM.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|ARM64.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|iPhone.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|x64.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|x64.Build.0 = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|x86.ActiveCfg = Release|Any CPU
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -586,8 +636,17 @@ Global
 		{AE79650A-B18B-4229-B167-ADBCAC2B9679} = {4741C651-A1E7-44C5-9A91-A6D59D1248F1}
 		{78CF883B-CACB-412F-9571-96211E2E7F7E} = {4741C651-A1E7-44C5-9A91-A6D59D1248F1}
 		{4D530D82-BD72-4D58-969C-2A8BDCD876F2} = {F435E472-6EF0-4739-9D92-A058FA5B039B}
+		{394950DC-7CDF-42FF-AAF0-03BBAB41953A} = {B9F3AD0C-1F50-445A-A6F1-88B6892EE9CC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F5304432-D676-40D8-AAB5-9F1CC1904CF2}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{2e9e4fc0-ef26-46ef-bfcf-20a2da4a748b}*SharedItemsImports = 4
+		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{6279c845-92f8-4333-ab99-3d213163593c}*SharedItemsImports = 13
+		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{78cf883b-cacb-412f-9571-96211e2e7f7e}*SharedItemsImports = 5
+		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{ae79650a-b18b-4229-b167-adbcac2b9679}*SharedItemsImports = 5
+		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{f3adab09-f459-407b-8920-45ec1cfc7040}*SharedItemsImports = 4
+		UWP\XamlMergeUWPTest\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems*{f9497365-f492-4027-be58-61521ee747ac}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

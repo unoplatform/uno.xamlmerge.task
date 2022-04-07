@@ -42,9 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<XamlMergeOutputFiles Include="Generated\mergedpages01.xaml"/>
-		<XamlMergeOutputFiles Include="Generated\mergedpages02.xaml"/>
-		<XamlMergeInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml;Themes\Generic.xaml" MergeFile="mergedpages01.xaml" />
+		<XamlMergeInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml;Themes\Generic.xaml" />
 	</ItemGroup>
 
 	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
@@ -55,5 +53,9 @@
 			<SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
 			<UndefineProperties>TargetFramework</UndefineProperties>
 		</ProjectReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Generated\" />
 	</ItemGroup>
 </Project>

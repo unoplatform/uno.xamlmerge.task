@@ -1,0 +1,6 @@
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:TestLibrary" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<!--origin: When_Two_MergeFiles_Single_Input\Input_1.Output1.xml-->
+	<x:Double x:Key="Value1">8</x:Double>
+	<!--origin: When_Two_MergeFiles_Single_Input\Input_2.Output1.xml-->
+	<x:Double x:Key="Value3">8</x:Double>
+</ResourceDictionary>

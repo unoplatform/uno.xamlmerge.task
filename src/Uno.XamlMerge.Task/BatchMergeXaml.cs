@@ -14,89 +14,134 @@ using System.Linq;
 
 namespace Uno.UI.Tasks.BatchMerge
 {
-	public class BatchMergeXaml_v0 : CustomTask
-	{
-		[Required]
-		public ITaskItem[] Pages { get; set; }
+    public class BatchMergeXaml_v0 : CustomTask
+    {
+        private List<string> _filesWritten = new();
 
-		[Required]
-		public string MergedXamlFile { get; set; }
+        [Required]
+        public ITaskItem[] Pages { get; set; }
 
-		[Required]
-		public string ProjectFullPath { get; set; }
+        [Required]
+        public ITaskItem[] MergedXamlFiles { get; set; }
 
-		[Required]
-		public string TlogReadFilesOutputPath { get; set; }
+        [Required]
+        public string ProjectFullPath { get; set; }
 
-		[Required]
-		public string TlogWriteFilesOutputPath { get; set; }
+        [Output]
+        public string[] FilesWritten
+            => _filesWritten.ToArray();
 
-		[Output]
-		public string[] FilesWritten
-		{
-			get { return filesWritten.ToArray(); }
-		}
+        public override bool Execute()
+        {
+            ValidatePageMergeFileMetadata();
 
-		private List<string> filesWritten = new List<string>();
+            if (HasLoggedErrors)
+            {
+                return false;
+            }
 
-		public override bool Execute()
-		{
-			MergedDictionary mergedDictionary = MergedDictionary.CreateMergedDicionary();
-			List<string> pages = new List<string>();
+            var filteredPages = Pages
+                .Except(MergedXamlFiles, FullPathComparer.Default)
+                .ToArray();
 
-			if (Pages != null)
-			{
-				foreach (ITaskItem pageItem in Pages)
-				{
-					string page = pageItem.ItemSpec;
-					if (File.Exists(page))
-					{
-						pages.Add(page);
-					}
-					else
-					{
-						LogError($"Can't find page {page}!");
-					}
-				}
-			}
+            if (MergedXamlFiles.Length > 1)
+            {
+                foreach (var mergedXamlFile in MergedXamlFiles)
+                {
+                    var mergeFileName = Path.GetFileName(mergedXamlFile.ItemSpec);
 
-			if (HasLoggedErrors)
-			{
-				return false;
-			}
+                    BatchMerger.Merge(this,
+                          mergedXamlFile.ItemSpec,
+                          ProjectFullPath,
+                          filteredPages.Where(p => string.Equals(p.GetMetadata("MergeFile"), mergeFileName, StringComparison.OrdinalIgnoreCase)).ToArray());
+                }
+            }
+            else if (MergedXamlFiles.Length == 1)
+            {
+                // Single target file, without "MergeFile" attribution
 
-			LogMessage($"Merging XAML files into {MergedXamlFile}...");
+                BatchMerger.Merge(this,
+                        MergedXamlFiles[0].ItemSpec,
+                        ProjectFullPath,
+                        filteredPages);
+            }
 
-			var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(ProjectFullPath));
+            return !HasLoggedErrors;
+        }
 
-			foreach (string page in pages)
-			{
-				try
-				{
-					mergedDictionary.MergeContent(
-						content: File.ReadAllText(page),
-						filePath: Path.GetFullPath(page)
-							.Replace(projectBasePath, "")
-							.TrimStart(Path.DirectorySeparatorChar));
-				}
-				catch (Exception)
-				{
-					LogError($"Exception found when merging page {page}!");
-					throw;
-				}
-			}
+        private void ValidatePageMergeFileMetadata()
+        {
+            if (MergedXamlFiles.Length > 1)
+            {
+                foreach (var page in Pages)
+                {
+                    if (string.IsNullOrEmpty(page.GetMetadata("MergeFile")))
+                    {
+                        LogError($"The page {page.ItemSpec} does not define a `MergeFile` metadata, when multiple `MergedXamlFiles` are specified.");
+                    }
+                }
+            }
+        }
 
-			Directory.CreateDirectory(Path.GetDirectoryName(MergedXamlFile));
-			Directory.CreateDirectory(Path.GetDirectoryName(TlogReadFilesOutputPath));
-			Directory.CreateDirectory(Path.GetDirectoryName(TlogWriteFilesOutputPath));
+        class BatchMerger
+        {
+            internal static void Merge(
+                CustomTask owner,
+                string mergedXamlFile,
+                string projectFullPath,
+                ITaskItem[] pageItems)
+            {
+                var mergedDictionary = MergedDictionary.CreateMergedDicionary();
+                List<string> pages = new();
 
-			mergedDictionary.FinalizeXaml();
-			filesWritten.Add(Utils.RewriteFileIfNecessary(MergedXamlFile, mergedDictionary.ToString()));
+                if (pageItems != null)
+                {
+                    foreach (var pageItem in pageItems)
+                    {
+                        var page = pageItem.ItemSpec;
 
-			File.WriteAllLines(TlogReadFilesOutputPath, Pages.Select(page => page.ItemSpec));
-			File.WriteAllLines(TlogWriteFilesOutputPath, FilesWritten);
+                        if (File.Exists(page))
+                        {
+                            pages.Add(page);
+                        }
+                        else
+                        {
+                            owner.LogError($"Can't find page {page}!");
+                        }
+                    }
+                }
 
-			return !HasLoggedErrors;
-		}
-	}
+                if (owner.HasLoggedErrors)
+                {
+                    return;
+                }
+
+                owner.LogMessage($"Merging XAML files into {mergedXamlFile}...");
+
+                var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(projectFullPath));
+
+                foreach (string page in pages)
+                {
+                    try
+                    {
+                        mergedDictionary.MergeContent(
+                            content: File.ReadAllText(page),
+                            filePath: Path.GetFullPath(page)
+                                .Replace(projectBasePath, "")
+                                .TrimStart(Path.DirectorySeparatorChar));
+                    }
+                    catch (Exception)
+                    {
+                        owner.LogError($"Exception found when merging page {page}!");
+                        throw;
+                    }
+                }
+
+                mergedDictionary.FinalizeXaml();
+
+                Directory.CreateDirectory(Path.GetDirectoryName(mergedXamlFile));
+                Utils.RewriteFileIfNecessary(mergedXamlFile, mergedDictionary.ToString());
+            }
+        }
+    }
 }

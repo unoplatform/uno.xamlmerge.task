@@ -58,4 +58,12 @@
 	<ItemGroup>
 	  <Folder Include="Generated\" />
 	</ItemGroup>
+
+	<Target Name="AfterBuildValidation"
+			AfterTargets="AfterBuild" 
+			Condition="'$(TargetFramework)'=='uap10.0.19041'">
+		
+		<Error Condition="!exists('$(OutputPath)\$(AssemblyName)\Generated\mergedpages.xaml')"
+			   Text="Missing generated file" />
+	</Target>
 </Project>

@@ -8,18 +8,9 @@
 	<UsingTask TaskName="GeneratePageList_v0" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\$(Configuration)_Shadow\Uno.XamlMerge.Task.v0.dll" Condition="exists('$(MSBuildThisFileDirectory)..\bin\$(Configuration)_Shadow\Uno.XamlMerge.Task.v0.dll')" />
 
 	<Target Name="GenerateMergedXaml"
-			BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" Condition="('$(TargetFramework)' == '' or '$(TargetFrameworks)'=='') and ('$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true')">
-
-		<PropertyGroup>
-			<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'=='' and '@(XamlMergeOutputFiles)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>
-		</PropertyGroup>
-
-		<Error Condition="'$(XamlMergeOutputFile)'!='' and '@(XamlMergeOutputFiles)'!=''"
-			   Text="Merging is not possible with both XamlMergeOutputFile and XamlMergeOutputFiles are defined" />
-		
-		<ItemGroup Condition="'$(XamlMergeOutputFile)'!=''">
-			<XamlMergeOutputFiles Include="$(XamlMergeOutputFile)" />
-		</ItemGroup>
+			BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" 
+			DependsOnTargets="_XamlMergeFillProperties"
+			Condition="('$(TargetFramework)' == '' or '$(TargetFrameworks)'=='') and ('$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true')">
 
 		<BatchMergeXaml_v0
 			ProjectFullPath="$(MSBuildProjectFullPath)"
@@ -31,18 +22,34 @@
 	</Target>
 
 	<Target Name="_AdjustedMergedXamlItems"
-					BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile">
+			BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile"
+			DependsOnTargets="_XamlMergeFillProperties">
 
 		<ItemGroup>
 			<Page Remove="@(XamlMergeInput)" />
 		</ItemGroup>
-		
+
 		<GeneratePageList_v0
 			ProjectDirectory="$(MSBuildProjectDirectory)"
 			Pages="@(Page)"
 			MergedXamlFiles="@(XamlMergeOutputFiles)">
 			<Output TaskParameter="OutputPages" ItemName="Page" />
 		</GeneratePageList_v0>
+
+	</Target>
+
+	<Target Name="_XamlMergeFillProperties">
+
+		<PropertyGroup>
+			<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'=='' and '@(XamlMergeOutputFiles)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>
+		</PropertyGroup>
+
+		<Error Condition="'$(XamlMergeOutputFile)'!='' and '@(XamlMergeOutputFiles)'!=''"
+			   Text="Merging is not possible with both XamlMergeOutputFile and XamlMergeOutputFiles are defined" />
+
+		<ItemGroup Condition="'$(XamlMergeOutputFile)'!=''">
+			<XamlMergeOutputFiles Include="$(XamlMergeOutputFile)" />
+		</ItemGroup>
 
 	</Target>
 

@@ -9,147 +9,146 @@ using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using Uno.UI.Tasks.BatchMerge;
 
-namespace Uno.XamlMerge.Tests
+namespace Uno.XamlMerge.Tests;
+
+[TestClass]
+public class Given_BatchMergeXaml
 {
-    [TestClass]
-    public class Given_BatchMergeXaml
+    static Regex _inputMetadataFilter = new Regex(@"Input_.*?\.(?<metadata>.*?)\.xml");
+    static Regex _expectedMetadataFilter = new Regex(@"merged.*?\.(?<metadata>.*?)\.xaml");
+
+    [TestMethod]
+    public void When_Empty()
     {
-        static Regex _inputMetadataFilter = new Regex(@"Input_.*?\.(?<metadata>.*?)\.xml");
-        static Regex _expectedMetadataFilter = new Regex(@"merged.*?\.(?<metadata>.*?)\.xaml");
+        var task = CreateMerger();
 
-        [TestMethod]
-        public void When_Empty()
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Key_TargeType_Conflict()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Duplicate_Keys_Different_Namespace_Single_Input()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Duplicate_Keys_Different_Namespace_Multiple_Input()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Duplicate_Keys_on_Theme_Resources_And_Comments_As_FirstNode()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Two_MergeFiles_Single_Input()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Three_MergeFiles_Single_Input()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
+    {
+        var basePath = GetBasePath(testName);
+
+        if (task.MergedXamlFiles.Length == 1)
         {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
+            Assert.AreEqual(
+                File.ReadAllText(Path.Combine(basePath, "expected.xml")).Replace("\t", "  ").Trim(),
+                File.ReadAllText(task.MergedXamlFiles[0].ItemSpec).Replace("\t", "  ").Trim()
+            );
         }
-
-        [TestMethod]
-        public void When_Key_TargeType_Conflict()
+        else
         {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
-        }
-
-        [TestMethod]
-        public void When_Duplicate_Keys_Different_Namespace_Single_Input()
-        {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
-        }
-
-        [TestMethod]
-        public void When_Duplicate_Keys_Different_Namespace_Multiple_Input()
-        {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
-        }
-
-        [TestMethod]
-        public void When_Duplicate_Keys_on_Theme_Resources_And_Comments_As_FirstNode()
-        {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
-        }
-
-        [TestMethod]
-        public void When_Two_MergeFiles_Single_Input()
-        {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
-        }
-
-        [TestMethod]
-        public void When_Three_MergeFiles_Single_Input()
-        {
-            var task = CreateMerger();
-
-            Assert.IsTrue(task.Execute());
-
-            ValidateOutput(task);
-        }
-
-        private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
-        {
-            var basePath = GetBasePath(testName);
-
-            if (task.MergedXamlFiles.Length == 1)
+            foreach(var file in task.MergedXamlFiles)
             {
-                Assert.AreEqual(
-                    File.ReadAllText(Path.Combine(basePath, "expected.xml")).Replace("\t", "  ").Trim(),
-                    File.ReadAllText(task.MergedXamlFiles[0].ItemSpec).Replace("\t", "  ").Trim()
-                );
-            }
-            else
-            {
-                foreach(var file in task.MergedXamlFiles)
+                if(_expectedMetadataFilter.Match(file.ItemSpec) is { Success: true } result)
                 {
-                    if(_expectedMetadataFilter.Match(file.ItemSpec) is { Success: true } result)
-                    {
-                        var assemblyName = result.Groups[1].ToString();
+                    var assemblyName = result.Groups[1].ToString();
 
-                        Assert.AreEqual(
-                            File.ReadAllText(Path.Combine(basePath, $"expected.{assemblyName}.xml")).Replace("\t", "  ").Trim(),
-                            File.ReadAllText(file.ItemSpec).Replace("\t", "  ").Trim()
-                        );
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Unable to find merge target in file name {file.ItemSpec}");
-                    }
+                    Assert.AreEqual(
+                        File.ReadAllText(Path.Combine(basePath, $"expected.{assemblyName}.xml")).Replace("\t", "  ").Trim(),
+                        File.ReadAllText(file.ItemSpec).Replace("\t", "  ").Trim()
+                    );
+                }
+                else
+                {
+                    throw new InvalidOperationException($"Unable to find merge target in file name {file.ItemSpec}");
                 }
             }
         }
+    }
 
-        private BatchMergeXaml_v0 CreateMerger([CallerMemberName] string testName = "")
+    private BatchMergeXaml_v0 CreateMerger([CallerMemberName] string testName = "")
+    {
+        var basePath = GetBasePath(testName);
+
+        BatchMergeXaml_v0 task = new();
+        task.Pages = Directory.GetFiles(basePath, "Input_*.xml").Select(f => new TaskItem(f, GetMergefileMetadata(f))).ToArray();
+        task.ProjectFullPath = basePath;
+        task.MergedXamlFiles = task.Pages
+            .Select(p => p.GetMetadata("MergeFile") is { Length: >  0} m ? m : "merged.xaml" )
+            .Distinct()
+            .Select(f => new TaskItem(Path.Combine(basePath, "Output", f)))
+            .ToArray();
+
+        return task;
+    }
+
+    private IDictionary? GetMergefileMetadata(string f)
+    {
+        if(_inputMetadataFilter.Match(Path.GetFileName(f)) is { Success: true } result)
         {
-            var basePath = GetBasePath(testName);
-
-            BatchMergeXaml_v0 task = new();
-            task.Pages = Directory.GetFiles(basePath, "Input_*.xml").Select(f => new TaskItem(f, GetMergefileMetadata(f))).ToArray();
-            task.ProjectFullPath = basePath;
-            task.MergedXamlFiles = task.Pages
-                .Select(p => p.GetMetadata("MergeFile") is { Length: >  0} m ? m : "merged.xaml" )
-                .Distinct()
-                .Select(f => new TaskItem(Path.Combine(basePath, "Output", f)))
-                .ToArray();
-
-            return task;
+            return new Dictionary<string, string>() { 
+                ["MergeFile"] = $"merged.{result.Groups[1]}.xaml",
+            };
         }
 
-        private IDictionary? GetMergefileMetadata(string f)
-        {
-            if(_inputMetadataFilter.Match(Path.GetFileName(f)) is { Success: true } result)
-            {
-                return new Dictionary<string, string>() { 
-                    ["MergeFile"] = $"merged.{result.Groups[1]}.xaml",
-                };
-            }
+        return new Dictionary<string, string>();
+    }
 
-            return new Dictionary<string, string>();
-        }
-
-        private string GetBasePath(string name)
-        {
-            return Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location)!, "Scenarios", name);
-        }
+    private string GetBasePath(string name)
+    {
+        return Path.Combine(Path.GetDirectoryName(this.GetType().Assembly.Location)!, "Scenarios", name);
     }
 }

@@ -40,9 +40,8 @@ namespace Uno.UI.Tasks.BatchMerge
                 return false;
             }
 
-            var filteredPages = Pages
-                .Except(MergedXamlFiles, FullPathComparer.Default)
-                .ToArray();
+            var filteredPages = Pages.ToList();
+            filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m));
 
             if (MergedXamlFiles.Length > 1)
             {
@@ -63,7 +62,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 BatchMerger.Merge(this,
                         MergedXamlFiles[0].ItemSpec,
                         ProjectFullPath,
-                        filteredPages);
+                        filteredPages.ToArray());
             }
 
             return !HasLoggedErrors;

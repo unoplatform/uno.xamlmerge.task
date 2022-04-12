@@ -10,8 +10,7 @@ internal class FullPathComparer : IEqualityComparer<ITaskItem>
 
     public bool Equals(ITaskItem x, ITaskItem y)
     {
-        return x.GetMetadata("FullPath") == y.GetMetadata("FullPath")
-           && x.GetMetadata("MergeFile") == y.GetMetadata("MergeFile");
+        return x.GetMetadata("FullPath") == y.GetMetadata("FullPath");
     }
 
     public int GetHashCode(ITaskItem obj)

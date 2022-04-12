@@ -41,7 +41,7 @@ namespace Uno.UI.Tasks.BatchMerge
             }
 
             var filteredPages = Pages.ToList();
-            filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m));
+            filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m)));
 
             if (MergedXamlFiles.Length > 1)
             {

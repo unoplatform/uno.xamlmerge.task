@@ -24,4 +24,25 @@
 	<None Update="Scenarios\**" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Scenarios\When_Two_MergeFiles_Single_Input_With_Common_File\expected.Output1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scenarios\When_Two_MergeFiles_Single_Input_With_Common_File\expected.Output2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scenarios\When_Two_MergeFiles_Single_Input_With_Common_File\Input_1.Output1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scenarios\When_Two_MergeFiles_Single_Input_With_Common_File\Input_1.Output2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scenarios\When_Two_MergeFiles_Single_Input_With_Common_File\Input_2.Output1.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scenarios\When_Two_MergeFiles_Single_Input_With_Common_File\Input_2.Output2.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

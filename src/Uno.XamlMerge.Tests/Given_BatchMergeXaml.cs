@@ -87,6 +87,16 @@ public class Given_BatchMergeXaml
         ValidateOutput(task);
     }
 
+    [TestMethod]
+    public void When_Two_MergeFiles_Single_Input_With_Common_File()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
     private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
     {
         var basePath = GetBasePath(testName);
@@ -124,7 +134,35 @@ public class Given_BatchMergeXaml
         var basePath = GetBasePath(testName);
 
         BatchMergeXaml_v0 task = new();
-        task.Pages = Directory.GetFiles(basePath, "Input_*.xml").Select(f => new TaskItem(f, GetMergefileMetadata(f))).ToArray();
+
+        task.Pages = Directory
+            .GetFiles(basePath, "Input_*.xml")
+            .OrderBy(f => f)
+            .SelectMany(inputFile =>
+            {
+                var mergeFileMetadata = GetMergeFile(inputFile);
+
+                if (mergeFileMetadata != null)
+                {
+                    var mergeFiles = mergeFileMetadata.Split(',');
+
+                    return mergeFiles.Select(mergedFile =>
+                    {
+                        var metadata = new Dictionary<string, string>()
+                        {
+                            ["MergeFile"] = $"merged.{mergedFile}.xaml",
+                        };
+
+                        return new TaskItem(inputFile, metadata);
+                    });
+                }
+                else
+                {
+                    return new[] { new TaskItem(inputFile) };
+                }
+            })
+            .ToArray();
+
         task.ProjectFullPath = basePath;
         task.MergedXamlFiles = task.Pages
             .Select(p => p.GetMetadata("MergeFile") is { Length: >  0} m ? m : "merged.xaml" )
@@ -135,16 +173,14 @@ public class Given_BatchMergeXaml
         return task;
     }
 
-    private IDictionary? GetMergefileMetadata(string f)
+    private string? GetMergeFile(string f)
     {
         if(_inputMetadataFilter.Match(Path.GetFileName(f)) is { Success: true } result)
         {
-            return new Dictionary<string, string>() { 
-                ["MergeFile"] = $"merged.{result.Groups[1]}.xaml",
-            };
+            return result.Groups[1].Value;
         }
 
-        return new Dictionary<string, string>();
+        return null;
     }
 
     private string GetBasePath(string name)

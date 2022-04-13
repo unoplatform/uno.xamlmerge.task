@@ -42,17 +42,17 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Windows.Compatibility" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0" />
-    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.0.1" />
-    <PackageReference Include="Uno.UI.WebAssembly" Version="4.0.7" />
-    <PackageReference Include="Uno.UI.RemoteControl" Version="4.0.7" Condition="'$(Configuration)'=='Debug'" />
+    <PackageReference Include="Uno.Extensions.Logging.WebAssembly.Console" Version="1.1.0" />
+    <PackageReference Include="Uno.UI.WebAssembly" Version="4.1.9" />
+    <PackageReference Include="Uno.UI.RemoteControl" Version="4.1.9" Condition="'$(Configuration)'=='Debug'" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
-    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
-    <PackageReference Include="Uno.Wasm.Bootstrap" Version="3.1.2" />
-    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.1.2" />
+    <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.1.9" />
+    <PackageReference Include="Uno.Wasm.Bootstrap" Version="3.3.1" />
+    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="3.3.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestLibrary\TestLibrary.csproj" />
   </ItemGroup>
   <Import Project="..\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems" Label="Shared" Condition="Exists('..\XamlMergeUWPTest.Shared\XamlMergeUWPTest.Shared.projitems')" />
-	<Import Project="..\XamlMergeUWPTest.UWP\XamlMerge.targets"/>
+	<Import Project="..\XamlMergeUWPTest.UWP\XamlMerge.targets" />
 </Project>

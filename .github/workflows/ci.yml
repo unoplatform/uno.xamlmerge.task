@@ -13,8 +13,8 @@ on:
       - release/**
 
 env:
-  UnoCheck_Version: '1.2.0-dev.24'
-  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/7017ad61795de3cb8b401282405bdbe263b77548/manifests/uno.ui-preview.manifest.json'
+  UnoCheck_Version: '1.5.4'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/34b1a60f5c1c51604b47362781969dde46979fd5/manifests/uno.ui-preview.manifest.json'
 
 jobs:
   build:
@@ -29,7 +29,7 @@ jobs:
     - name: Setup .NET Core v6
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.100'
+        dotnet-version: '6.0.401'
 
     - name: Setup GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.9

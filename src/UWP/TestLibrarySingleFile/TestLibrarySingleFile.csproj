@@ -9,7 +9,7 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.1.9" />
+		<PackageReference Include="Uno.UI" Version="4.6.19" />
 	</ItemGroup>
 	<ItemGroup>
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
@@ -59,11 +59,8 @@
 	  <Folder Include="Generated\" />
 	</ItemGroup>
 
-	<Target Name="AfterBuildValidation"
-			AfterTargets="AfterBuild" 
-			Condition="'$(TargetFramework)'=='uap10.0.19041'">
+	<Target Name="AfterBuildValidation" AfterTargets="AfterBuild" Condition="'$(TargetFramework)'=='uap10.0.19041'">
 		
-		<Error Condition="!exists('$(OutputPath)\$(AssemblyName)\Generated\mergedpages.xaml')"
-			   Text="Missing generated file" />
+		<Error Condition="!exists('$(OutputPath)\$(AssemblyName)\Generated\mergedpages.xaml')" Text="Missing generated file" />
 	</Target>
 </Project>

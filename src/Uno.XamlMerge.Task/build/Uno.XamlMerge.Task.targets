@@ -8,7 +8,7 @@
 	<UsingTask TaskName="GeneratePageList_v0" AssemblyFile="$(MSBuildThisFileDirectory)..\bin\$(Configuration)_Shadow\Uno.XamlMerge.Task.v0.dll" Condition="exists('$(MSBuildThisFileDirectory)..\bin\$(Configuration)_Shadow\Uno.XamlMerge.Task.v0.dll')" />
 
 	<Target Name="GenerateMergedXaml"
-			BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild" 
+			BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild;GenerateMSBuildEditorConfigFileCore" 
 			DependsOnTargets="_XamlMergeFillProperties"
 			Condition="('$(TargetFramework)' == '' or '$(TargetFrameworks)'=='') and ('$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true')">
 
@@ -22,7 +22,7 @@
 	</Target>
 
 	<Target Name="_AdjustedMergedXamlItems"
-			BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile"
+			BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile;GenerateMSBuildEditorConfigFileCore"
 			DependsOnTargets="_XamlMergeFillProperties">
 
 		<ItemGroup>

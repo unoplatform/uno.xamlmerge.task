@@ -2,10 +2,7 @@
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Text;
 
 namespace Uno.UI.Tasks.BatchMerge;
 
@@ -25,8 +22,16 @@ public class GeneratePageList_v0 : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
+        Debugger.Launch();
+
         OutputPages = MergedXamlFiles
-            .Select(f => new TaskItem(XamlMerge.Task.Utilities.FileUtilities.MakeRelative(ProjectDirectory, f.ItemSpec)))
+            .Select(f =>
+            {
+                var item = new TaskItem(XamlMerge.Task.Utilities.FileUtilities.MakeRelative(ProjectDirectory, f.ItemSpec));
+                f.CopyMetadataTo(item);
+                f.SetMetadata("XamlRuntime", "WinUI");
+                return item;
+            })
             .Except(Pages, FullPathComparer.Default)
             .Distinct(FullPathComparer.Default)
             .ToArray();

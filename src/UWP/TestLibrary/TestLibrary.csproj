@@ -9,7 +9,7 @@
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.UI" Version="4.1.9" />
+		<PackageReference Include="Uno.UI" Version="4.6.19" />
 	</ItemGroup>
 	<ItemGroup>
 		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
@@ -42,8 +42,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<XamlMergeOutputFiles Include="Generated\mergedpages01.xaml"/>
-		<XamlMergeOutputFiles Include="Generated\mergedpages02.xaml"/>
+		<XamlMergeOutputFiles Include="Generated\mergedpages01.xaml" />
+		<XamlMergeOutputFiles Include="Generated\mergedpages02.xaml" />
 		<XamlMergeInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml;Themes\Generic.xaml" MergeFile="mergedpages01.xaml" />
 	</ItemGroup>
 

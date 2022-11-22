@@ -1,5 +1,20 @@
-<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:local="using:TestLibrary" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d xamarin ios android macos wasm skia" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:xamarin="http://uno.ui/xamarin" xmlns:android="http://uno.ui/android" xmlns:ios="http://uno.ui/ios" xmlns:wasm="http://uno.ui/wasm" xmlns:macos="http://uno.ui/macos" xmlns:skia="http://uno.ui/skia" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d xamarin ios android macos wasm skia" xmlns:local="using:TestLibrary" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:xamarin="http://uno.ui/xamarin" xmlns:android="http://uno.ui/android" xmlns:ios="http://uno.ui/ios" xmlns:wasm="http://uno.ui/wasm" xmlns:macos="http://uno.ui/macos" xmlns:skia="http://uno.ui/skia" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
   <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
     <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
   </ResourceDictionary.MergedDictionaries>
   <ResourceDictionary.ThemeDictionaries>
@@ -12,16 +27,14 @@
       <android:FontFamily x:Key="SymbolThemeFontFamily">ms-appx:///Assets/Fonts/uno-fluentui-assets.ttf#Symbols</android:FontFamily>
     </ResourceDictionary>
   </ResourceDictionary.ThemeDictionaries>
-  <!--origin: Inner1\Colors.xaml-->
+  <!--origin: Generated\mergedpages01.xaml-->
   <x:String x:Key="TestLibrary_String02">TestLibrary String 02</x:String>
-  <!--origin: Inner1\ImplicitConflict.xaml-->
   <Style x:Key="Button" TargetType="TextBlock">
     <Setter Property="FontSize" Value="12" />
   </Style>
   <Style TargetType="Button">
     <Setter Property="FontSize" Value="24" />
   </Style>
-  <!--origin: Inner1\ResourceDictionary2.xaml-->
   <xamarin:Style TargetType="ItemsControl">
     <Setter Property="Template">
       <Setter.Value>
@@ -32,7 +45,146 @@
     </Setter>
   </xamarin:Style>
   <x:String x:Key="TestLibrary_String03">TestLibrary String 02</x:String>
+  <x:String x:Key="TestLibrary_String">TestLibrary String</x:String>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <!--origin: Generated\mergedpages02.xaml-->
+  <!--origin: Inner1\Colors.xaml-->
+  <!--origin: Inner1\ImplicitConflict.xaml-->
+  <!--origin: Inner1\ResourceDictionary2.xaml-->
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
   <!--origin: Inner1\_test.xaml-->
   <!--origin: ResourceDictionary1.xaml-->
-  <x:String x:Key="TestLibrary_String">TestLibrary String</x:String>
 </ResourceDictionary>

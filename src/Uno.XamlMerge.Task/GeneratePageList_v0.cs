@@ -22,8 +22,6 @@ public class GeneratePageList_v0 : Microsoft.Build.Utilities.Task
 
     public override bool Execute()
     {
-        Debugger.Launch();
-
         OutputPages = MergedXamlFiles
             .Select(f =>
             {

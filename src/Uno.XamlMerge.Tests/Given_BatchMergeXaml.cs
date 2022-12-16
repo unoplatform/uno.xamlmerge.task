@@ -48,6 +48,37 @@ public class Given_BatchMergeXaml
     }
 
     [TestMethod]
+    public void When_Duplicate_ThemeResources()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Duplicate_ThemeResources_With_Prefix()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+
+    [TestMethod]
+    public void When_Duplicate_ThemeResources_With_Ignored_Prefix()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
     public void When_Duplicate_Keys_Different_Namespace_Multiple_Input()
     {
         var task = CreateMerger();

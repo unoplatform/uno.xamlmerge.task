@@ -16,6 +16,11 @@
     <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
     <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
     <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
+    <ResourceDictionary Source="ms-appx:///TestLibrary/Colors.xaml" />
   </ResourceDictionary.MergedDictionaries>
   <ResourceDictionary.ThemeDictionaries>
     <ResourceDictionary x:Key="Default">
@@ -46,6 +51,51 @@
   </xamarin:Style>
   <x:String x:Key="TestLibrary_String03">TestLibrary String 02</x:String>
   <x:String x:Key="TestLibrary_String">TestLibrary String</x:String>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
+  <xamarin:Style TargetType="ItemsControl">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ControlTemplate TargetType="ItemsControl">
+          <ItemsPresenter Padding="{TemplateBinding Padding}" />
+        </ControlTemplate>
+      </Setter.Value>
+    </Setter>
+  </xamarin:Style>
   <xamarin:Style TargetType="ItemsControl">
     <Setter Property="Template">
       <Setter.Value>

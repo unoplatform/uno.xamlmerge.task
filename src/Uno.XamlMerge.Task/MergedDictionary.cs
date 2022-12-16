@@ -246,7 +246,13 @@ namespace Uno.UI.Tasks.BatchMerge
                 // if it's not, or if we haven't seen a previous node with this key, then we'll just
                 // add it to our list.
                 string simpleNodeKey = GetKey(node);
-                string nodeKey = simpleNodeKey + node.Prefix;
+                var currentIgnorables = BuildIgnorables();
+
+                // We need allow ignored keys as they may be used to provide
+                // per-platform styles based on uno's selective ignorables.
+                string nodeKey = (currentIgnorables?.Contains(node.Prefix) ?? false)
+                    ? simpleNodeKey + node.Prefix
+                    : simpleNodeKey;
 
                 if (simpleNodeKey.Length == 0 || !nodeKeyToNodeListIndexDictionary.ContainsKey(nodeKey))
                 {
@@ -273,6 +279,30 @@ namespace Uno.UI.Tasks.BatchMerge
                     parentDictionary.RemoveAncestorNodesWithKey(nodeKey);
                 }
             }
+        }
+
+        private string[] BuildIgnorables()
+        {
+            HashSet<string> result = new();
+
+            var current = this;
+
+            do
+            {
+                var nsList = current._ignorablesAttribute?.Value.Split(' ') ?? Array.Empty<string>();
+
+                foreach (var ns in nsList)
+                {
+                    if (!result.Contains(ns))
+                    {
+                        result.Add(ns);
+                    }
+                }
+                current = current.parentDictionary;
+
+            } while (current != null);
+
+            return result.ToArray();
         }
 
         private XmlNode GetXaml()

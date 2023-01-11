@@ -10,7 +10,7 @@
 	<Target Name="GenerateMergedXaml"
 			BeforeTargets="_ComputeTargetFrameworkItems;BeforeBuild;GenerateMSBuildEditorConfigFileCore;_InjectAdditionalFiles" 
 			DependsOnTargets="_XamlMergeFillProperties"
-			Condition="('$(TargetFramework)' == '' or '$(TargetFrameworks)'=='') and ('$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true')">
+			Condition="'$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true'">
 
 		<BatchMergeXaml_v0
 			ProjectFullPath="$(MSBuildProjectFullPath)"

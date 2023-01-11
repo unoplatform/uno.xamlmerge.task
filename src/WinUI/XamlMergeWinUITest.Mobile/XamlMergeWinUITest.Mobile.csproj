@@ -26,11 +26,11 @@
 		<RuntimeIdentifier Condition="'$(TargetFramework)' == 'net6.0-macos'">osx-x64</RuntimeIdentifier>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Uno.WinUI" Version="4.6.41" />
-		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.41" Condition="'$(Configuration)'=='Debug'" />
-		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.41" />
+		<PackageReference Include="Uno.WinUI" Version="4.6.19" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.19" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
-		<PackageReference Include="Uno.WinUI.Lottie" Version="4.6.41" />
+		<PackageReference Include="Uno.WinUI.Lottie" Version="4.6.19" />
 	</ItemGroup>
 	<Choose>
 		<When Condition="'$(TargetFramework)'=='net6.0-android'">
@@ -83,6 +83,10 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\TestLibraryWinUI\TestLibraryWinUI.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Generated\" />
 	</ItemGroup>
 
 	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />

@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType Condition="'$(Configuration)'=='Release'">WinExe</OutputType>
+		<OutputType Condition="'$(Configuration)'=='Debug'">Exe</OutputType>
+		<TargetFramework>net6.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup Condition="exists('..\XamlMergeWinUITest.Windows')">
+		<EmbeddedResource Include="..\XamlMergeWinUITest.Windows\Package.appxmanifest" LogicalName="Package.appxmanifest" />
+		<Content Include="..\XamlMergeWinUITest.Windows\Images\StoreLogo.png" Link="Assets\StoreLogo.png" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Assets\**" />
+	</ItemGroup>
+	<ItemGroup>
+		<UpToDateCheckInput Include="..\XamlMergeWinUITest.Shared\**\*.xaml" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="5.0.0" />
+		<PackageReference Include="Uno.WinUI.Skia.Gtk" Version="4.6.41" />
+		<PackageReference Include="Uno.WinUI.RemoteControl" Version="4.6.41" Condition="'$(Configuration)'=='Debug'" />
+		<PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.41" />
+		<PackageReference Include="Uno.WinUI.Lottie" Version="4.6.41" />
+		<PackageReference Include="SkiaSharp.Views.Uno.WinUI" Version="2.88.3" />
+		<PackageReference Include="SkiaSharp.Skottie" Version="2.88.3" />
+	</ItemGroup>
+	<Import Project="..\XamlMergeWinUITest.Shared\XamlMergeWinUITest.Shared.projitems" Label="Shared" />
+
+	<ItemGroup>
+		<XamlMergeInput Include="Styles\**\*.xaml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\TestLibraryWinUI\TestLibraryWinUI.csproj" />
+	</ItemGroup>
+
+	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
+</Project>

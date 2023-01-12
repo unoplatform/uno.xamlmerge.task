@@ -104,7 +104,7 @@ jobs:
     - name: Validate Test Projects
       run: |
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        & $msbuild /m /nr:false /r /p:Configuration=Release src\Uno.XamlMerge.Task.sln /p:AppxPackageSigningEnabled=false
+        & $msbuild /m /nr:false /r /p:Configuration=Release build\Uno.XamlMerge.Task-ci-only.slnf /p:AppxPackageSigningEnabled=false /p:AotAssemblies=false /p:WasmShellILLinkerEnabled=false
 
   publish:
     name: Publish

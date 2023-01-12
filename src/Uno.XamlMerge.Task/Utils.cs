@@ -6,6 +6,7 @@
 #nullable disable
 
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -37,26 +38,44 @@ namespace Uno.UI.Tasks.BatchMerge
 
         public static string RewriteFileIfNecessary(string path, string contents)
         {
-            bool rewrite = true;
-            var fullPath = Path.GetFullPath(path);
-            try
+            var sw = Stopwatch.StartNew();
+            Exception lastException = null;
+
+            while (sw.Elapsed < TimeSpan.FromSeconds(3))
             {
-                string existingContents = File.ReadAllText(fullPath);
-                if (String.Equals(existingContents, contents))
+                try
                 {
-                    rewrite = false;
+                    bool rewrite = true;
+                    var fullPath = Path.GetFullPath(path);
+                    try
+                    {
+                        string existingContents = File.ReadAllText(fullPath);
+                        if (String.Equals(existingContents, contents))
+                        {
+                            rewrite = false;
+                        }
+                    }
+                    catch
+                    {
+                    }
+
+                    if (rewrite)
+                    {
+                        File.WriteAllText(fullPath, contents);
+                    }
+
+                    return fullPath;
+                }
+                catch(Exception e)
+                {
+                    lastException = e;
+
+                    // Retry on any exception
+                    Thread.Sleep(250);
                 }
             }
-            catch
-            {
-            }
 
-            if (rewrite)
-            {
-                File.WriteAllText(fullPath, contents);
-            }
-
-            return fullPath;
+            throw new InvalidOperationException($"Failed to write file {path}: {lastException}");
         }
     }
 }

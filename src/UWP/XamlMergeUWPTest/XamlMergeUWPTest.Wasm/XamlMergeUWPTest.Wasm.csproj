@@ -48,7 +48,7 @@
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.0.7" />
     <PackageReference Include="Uno.UI.Adapter.Microsoft.Extensions.Logging" Version="4.6.19" />
     <PackageReference Include="Uno.Wasm.Bootstrap" Version="7.0.8" />
-    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.8" />
+    <PackageReference Include="Uno.Wasm.Bootstrap.DevServer" Version="7.0.13" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\TestLibrary\TestLibrary.csproj" />

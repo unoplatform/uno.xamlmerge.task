@@ -68,9 +68,9 @@ namespace Uno.UI.Tasks.BatchMerge
             }
         }
 
-		private void MergeIgnorables(XmlDocument document)
-		{
-            var newIgnorablesAttribute = FindNode(document, "ResourceDictionary")?.Attributes?.OfType<XmlAttribute>().FirstOrDefault(a => string.Equals("Ignorable",a.LocalName, StringComparison.OrdinalIgnoreCase) && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
+        private void MergeIgnorables(XmlDocument document)
+        {
+            var newIgnorablesAttribute = FindNode(document, "ResourceDictionary")?.Attributes?.OfType<XmlAttribute>().FirstOrDefault(a => string.Equals("Ignorable", a.LocalName, StringComparison.OrdinalIgnoreCase) && a.NamespaceURI == "http://schemas.openxmlformats.org/markup-compatibility/2006");
 
             if (newIgnorablesAttribute is not null)
             {
@@ -149,7 +149,7 @@ namespace Uno.UI.Tasks.BatchMerge
         }
 
         private void UpdateIgnorables(string ignorables)
-		{
+        {
             if (!string.IsNullOrWhiteSpace(ignorables))
             {
                 if (_ignorablesAttribute == null)
@@ -165,22 +165,59 @@ namespace Uno.UI.Tasks.BatchMerge
         }
 
 
-		private void AddNamespace(string xmlnsString, string namespaceString)
+        private void AddNamespace(string xmlnsString, string namespaceString)
         {
             if (!knownNamespaces.TryGetValue(xmlnsString, out var existingNamespaceString))
             {
                 xmlElement.SetAttribute("xmlns:" + xmlnsString, namespaceString);
                 knownNamespaces.Add(xmlnsString, namespaceString);
             }
-			else
-			{
-                if(existingNamespaceString != namespaceString)
-				{
+            else if (TryMergeHashUsings(existingNamespaceString, namespaceString, out var mergedNamespaceString))
+            {
+                xmlElement.SetAttribute("xmlns:" + xmlnsString, mergedNamespaceString);
+                knownNamespaces[xmlnsString] = mergedNamespaceString;
+            }
+            else
+            {
+                if (!existingNamespaceString.Equals(namespaceString, StringComparison.Ordinal))
+                {
                     throw new InvalidOperationException(
                         $"The XML namespace [{xmlnsString}] with the value [{namespaceString}] is different than the already defined value [{existingNamespaceString}]. " +
-						$"Make sure to align all namespace defintions to the same values across merged files.");
-				}
-			}
+                        $"Make sure to align all namespace defintions to the same values across merged files.");
+                }
+            }
+        }
+
+        private bool TryMergeHashUsings(string existingNamespaceString, string newNamespaceString, out string mergedNamespaceString)
+        {
+            if (existingNamespaceString.Equals(newNamespaceString, StringComparison.Ordinal))
+            {
+                // Nothing to do. Everything is fine.
+                mergedNamespaceString = null;
+                return false;
+            }
+
+            var (existingUri, existingUsings) = TryStripHashUsingToTheEnd(existingNamespaceString);
+            var (newUri, newUsings) = TryStripHashUsingToTheEnd(newNamespaceString);
+            if (!existingUri.Equals(newUri, StringComparison.Ordinal))
+            {
+                mergedNamespaceString = null;
+                return false;
+            }
+
+            mergedNamespaceString = existingUri + "#using:" + string.Join(";", existingUsings.Concat(newUsings).Distinct());
+            return true;
+
+            static (string NamespaceUri, string[] Usings) TryStripHashUsingToTheEnd(string namespaceString)
+            {
+                var indexOfHashUsing = namespaceString.IndexOf("#using:", StringComparison.Ordinal);
+                if (indexOfHashUsing == -1)
+                {
+                    return (namespaceString, Array.Empty<string>());
+                }
+
+                return (namespaceString.Substring(0, indexOfHashUsing), namespaceString.Substring(indexOfHashUsing + "#using:".Length).Split(';'));
+            }
         }
 
         private void AddNode(XmlNode node, Dictionary<string, string> xmlnsReplacementDictionary)
@@ -195,12 +232,12 @@ namespace Uno.UI.Tasks.BatchMerge
             ReplaceNamespacePrefix(node, xmlnsReplacementDictionary);
 
             if (node.Name == "ResourceDictionary.MergedDictionaries")
-			{
+            {
                 foreach (var childNode in node.ChildNodes.OfType<XmlElement>())
                 {
                     mergedDictionaries.Add(childNode);
                 }
-			}
+            }
             else if (node.Name == "ResourceDictionary.ThemeDictionaries")
             {
                 // This will be a list of either ResourceDictionaries or comments.
@@ -500,6 +537,6 @@ namespace Uno.UI.Tasks.BatchMerge
         private Dictionary<string, string> knownNamespaces;
         private List<XmlElement> mergedDictionaries = new();
         private MergedDictionary parentDictionary;
-		private XmlAttribute _ignorablesAttribute;
-	}
+        private XmlAttribute _ignorablesAttribute;
+    }
 }

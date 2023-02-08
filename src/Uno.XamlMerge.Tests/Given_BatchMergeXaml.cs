@@ -128,6 +128,16 @@ public class Given_BatchMergeXaml
         ValidateOutput(task);
     }
 
+    [TestMethod]
+    public void When_Different_Namespace_Should_Be_Merged()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
     private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
     {
         var basePath = GetBasePath(testName);

@@ -84,7 +84,7 @@ namespace Uno.UI.Tasks.BatchMerge
                                         var nsName = split[1];
                                         if (knownNamespaces.TryGetValue(prefix, out var nsUri))
                                         {
-                                            xmlNodeCloned.SetAttribute(nsName, knownNamespaces[prefix], xmlAttribute.Value);
+                                            xmlNodeCloned.SetAttribute(nsName, nsUri, xmlAttribute.Value);
                                         }
                                         else
                                         {
@@ -440,7 +440,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
             foreach (XmlAttribute attribute in node.Attributes)
             {
-                if (attribute.Name == "x:Key" || attribute.Name == "x:Name")
+                if (attribute.NamespaceURI == "http://schemas.microsoft.com/winfx/2006/xaml" && attribute.LocalName is "Key" or "Name")
                 {
                     key = attribute.Value;
                     break;

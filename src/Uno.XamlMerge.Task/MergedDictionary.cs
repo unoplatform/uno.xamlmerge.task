@@ -36,11 +36,8 @@ namespace Uno.UI.Tasks.BatchMerge
             return Utils.UnEscapeAmpersand(sw.ToString());
         }
 
-        public void MergeContent(String content, string filePath)
+        public void Prepare(String content, string filePath)
         {
-            var comment = owningDocument.CreateComment($"origin: {filePath}");
-            nodeList.Add(comment);
-
             content = Utils.EscapeAmpersand(content);
 
             var document = new XmlDocument();
@@ -56,13 +53,59 @@ namespace Uno.UI.Tasks.BatchMerge
             {
                 AddNamespace(entry.Key, entry.Value);
             }
-            foreach (XmlNode node in document.ChildNodes)
+
+            documents.Add((document, xmlnsReplacementDictionary, filePath));
+        }
+
+        public void MergeContent()
+        {
+            foreach (var (document, xmlnsReplacementDictionary, filePath) in documents)
             {
-                if (node.Name == "ResourceDictionary")
+                var comment = owningDocument.CreateComment($"origin: {filePath}");
+                nodeList.Add(comment);
+
+                foreach (XmlNode node in document.ChildNodes)
                 {
-                    foreach (XmlNode xmlNode in node.ChildNodes)
+                    if (node.Name == "ResourceDictionary")
                     {
-                        AddNode(xmlNode, xmlnsReplacementDictionary);
+                        foreach (XmlNode xmlNode in node.ChildNodes)
+                        {
+                            if (xmlNode is XmlElement xmlElement)
+                            {
+                                var xmlNodeCloned = (XmlElement)xmlNode.CloneNode(true);
+                                xmlNodeCloned.RemoveAllAttributes();
+
+                                foreach (XmlAttribute xmlAttribute in xmlElement.Attributes)
+                                {
+                                    if (xmlAttribute.Name.Contains(":"))
+                                    {
+                                        var split = xmlAttribute.Name.Split(':');
+                                        var prefix = split[0];
+                                        var nsName = split[1];
+                                        if (knownNamespaces.TryGetValue(prefix, out var nsUri))
+                                        {
+                                            xmlNodeCloned.SetAttribute(nsName, knownNamespaces[prefix], xmlAttribute.Value);
+                                        }
+                                        else
+                                        {
+                                            xmlNodeCloned.SetAttribute(xmlAttribute.Name, xmlAttribute.Value);
+                                        }
+                                    }
+                                    else
+                                    {
+                                        xmlNodeCloned.SetAttribute(xmlAttribute.Name, xmlAttribute.Value);
+                                    }
+                                    
+                                }
+
+                                AddNode(xmlNodeCloned, xmlnsReplacementDictionary);
+                            }
+                            else
+                            {
+                                AddNode(xmlNode, xmlnsReplacementDictionary);
+                            }
+                            
+                        }
                     }
                 }
             }
@@ -525,6 +568,7 @@ namespace Uno.UI.Tasks.BatchMerge
         private XmlElement xmlElement;
         private XmlDocument owningDocument;
         private List<XmlNode> nodeList;
+        private List<(XmlDocument, Dictionary<string, string>, string)> documents = new();
 
         // We'll want to remove nodes from the node list if a child dictionary has the same node,
         // but if we just removed the nodes then the values in nodeKeyToNodeListIndexDictionary would be wrong.

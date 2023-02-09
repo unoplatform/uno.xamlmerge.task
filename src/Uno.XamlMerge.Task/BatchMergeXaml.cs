@@ -123,7 +123,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 {
                     try
                     {
-                        mergedDictionary.MergeContent(
+                        mergedDictionary.Prepare(
                             content: File.ReadAllText(page),
                             filePath: Path.GetFullPath(page)
                                 .Replace(projectBasePath, "")
@@ -131,10 +131,12 @@ namespace Uno.UI.Tasks.BatchMerge
                     }
                     catch (Exception)
                     {
-                        owner.LogError($"Exception found when merging page {page}!");
+                        owner.LogError($"Exception found when merging namespaces for page {page}!");
                         throw;
                     }
                 }
+
+                mergedDictionary.MergeContent();
 
                 mergedDictionary.FinalizeXaml();
 

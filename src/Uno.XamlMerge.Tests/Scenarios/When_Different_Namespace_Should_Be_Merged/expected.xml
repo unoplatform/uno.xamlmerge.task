@@ -1,8 +1,4 @@
-﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wasm="http://uno.ui/wasm#using:NS1;NS2" xmlns:android="http://uno.ui/android#using:AndroidNS" xmlns:ios="http://uno.ui/ios#using:iosNS" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+﻿<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wasm="http://uno.ui/wasm#using:NS1;NS2" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
   <!--origin: When_Different_Namespace_Should_Be_Merged\Input_Dictionary_1.xml-->
-  <MyElement1 android:MyProp="P1" />
-  <MyElement2 ios:MyProp="P2" />
   <!--origin: When_Different_Namespace_Should_Be_Merged\Input_Dictionary_2.xml-->
-  <MyElement3 android:MyProp="P3" />
-  <MyElement4 ios:MyProp="P4" />
 </ResourceDictionary>

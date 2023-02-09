@@ -1,0 +1,15 @@
+﻿<ResourceDictionary
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+	xmlns:wasm="http://uno.ui/wasm#using:NS1"
+  xmlns:android="http://uno.ui/android#using:AndroidNS"
+  xmlns:ios="http://uno.ui/ios">
+
+  <MyElement1 android:MyProp="P1" />
+  <MyElement2 ios:MyProp="P2" />
+  <MyElement3 MyProp="P3" />
+  <android:MyElement4 MyProp="P4" />
+  <ios:MyElement5 MyProp="P5" />
+
+</ResourceDictionary>

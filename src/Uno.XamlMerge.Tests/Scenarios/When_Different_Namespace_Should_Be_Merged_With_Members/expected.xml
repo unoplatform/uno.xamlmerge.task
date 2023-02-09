@@ -1,0 +1,14 @@
+<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wasm="http://uno.ui/wasm#using:NS1;NS2" xmlns:android="http://uno.ui/android#using:AndroidNS" xmlns:ios="http://uno.ui/ios#using:iosNS" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <!--origin: When_Different_Namespace_Should_Be_Merged_With_Members\Input_Dictionary_1.xml-->
+  <MyElement1 android:MyProp="P1" />
+  <MyElement2 ios:MyProp="P2" />
+  <MyElement3 MyProp="P3" />
+  <android:MyElement4 MyProp="P4" />
+  <ios:MyElement5 MyProp="P5" />
+  <!--origin: When_Different_Namespace_Should_Be_Merged_With_Members\Input_Dictionary_2.xml-->
+  <MyElement6 android:MyProp="P6" />
+  <MyElement7 ios:MyProp="P7" />
+  <MyElement8 MyProp="P8" />
+  <android:MyElement9 MyProp="P9" />
+  <ios:MyElement10 MyProp="P10" />
+</ResourceDictionary>

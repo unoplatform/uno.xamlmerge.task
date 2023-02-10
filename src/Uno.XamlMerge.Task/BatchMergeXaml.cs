@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace Uno.UI.Tasks.BatchMerge
 {
@@ -84,6 +85,37 @@ namespace Uno.UI.Tasks.BatchMerge
 
         class BatchMerger
         {
+            private static bool TryMergeHashUsings(string existingNamespaceString, string newNamespaceString, out string mergedNamespaceString)
+            {
+                if (existingNamespaceString.Equals(newNamespaceString, StringComparison.Ordinal))
+                {
+                    mergedNamespaceString = existingNamespaceString;
+                    return true;
+                }
+
+                var (existingUri, existingUsings) = TryStripHashUsingToTheEnd(existingNamespaceString);
+                var (newUri, newUsings) = TryStripHashUsingToTheEnd(newNamespaceString);
+                if (!existingUri.Equals(newUri, StringComparison.Ordinal))
+                {
+                    mergedNamespaceString = null;
+                    return false;
+                }
+
+                mergedNamespaceString = existingUri + "#using:" + string.Join(";", existingUsings.Concat(newUsings).Distinct());
+                return true;
+
+                static (string NamespaceUri, string[] Usings) TryStripHashUsingToTheEnd(string namespaceString)
+                {
+                    var indexOfHashUsing = namespaceString.IndexOf("#using:", StringComparison.Ordinal);
+                    if (indexOfHashUsing == -1)
+                    {
+                        return (namespaceString, Array.Empty<string>());
+                    }
+
+                    return (namespaceString.Substring(0, indexOfHashUsing), namespaceString.Substring(indexOfHashUsing + "#using:".Length).Split(';'));
+                }
+            }
+
             internal static void Merge(
                 CustomTask owner,
                 string mergedXamlFile,
@@ -119,15 +151,74 @@ namespace Uno.UI.Tasks.BatchMerge
 
                 var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(projectFullPath));
 
+                var dictionary = new Dictionary<string, string>();
+                var documents = new List<XDocument>();
+
+                // This dictionary handles elements, e.g, <android:MyAndroid />, where the key is the XElement
+                // and the value is the prefix (e.g, "android")
+                var elementsToUpdate = new Dictionary<XElement, string>();
+
+                // This dictionary handles attributes that are namespace declarations, e.g xmlns:android="..."
+                // where the key is the XAttribute and the value is the namespace name (e.g, "android")
+                var attributesToUpdate = new Dictionary<XAttribute, string>();
+
+                // This dictionary handles attributes that are property prefixes, e.g, <MyElement android:MyProp="Value" />
+                var propertyAttributesToUpdate = new Dictionary<XAttribute, string>();
+
+                
                 foreach (string page in pages)
                 {
                     try
                     {
-                        mergedDictionary.Prepare(
-                            content: File.ReadAllText(page),
-                            filePath: Path.GetFullPath(page)
-                                .Replace(projectBasePath, "")
-                                .TrimStart(Path.DirectorySeparatorChar));
+                        XDocument document = XDocument.Load(page, LoadOptions.PreserveWhitespace);
+                        foreach (XNode node in document.DescendantNodes())
+                        {
+                            if (node is XElement element)
+                            {
+                                var prefix = element.GetPrefixOfNamespace(element.Name.NamespaceName);
+                                if (prefix is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
+                                {
+                                    elementsToUpdate.Add(element, prefix);
+                                }
+
+                                foreach (XAttribute att in element.Attributes())
+                                {
+                                    if (att.IsNamespaceDeclaration && att.Name.NamespaceName == "http://www.w3.org/2000/xmlns/")
+                                    {
+                                        string name = att.Name.LocalName;
+                                        if (name is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
+                                        {
+                                            attributesToUpdate.Add(att, name);
+                                            if (dictionary.TryGetValue(name, out var existing))
+                                            {
+                                                if (TryMergeHashUsings(existing, att.Value, out var merged))
+                                                {
+                                                    dictionary[name] = merged;
+                                                }
+                                                else
+                                                {
+                                                    throw new Exception($"Cannot merge '{existing}' with '{att.Value}' for '{name}'");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                dictionary.Add(name, att.Value);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var attributePrefix = element.GetPrefixOfNamespace(att.Name.NamespaceName);
+                                        if (attributePrefix is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
+                                        {
+                                            propertyAttributesToUpdate.Add(att, attributePrefix);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        documents.Add(document);
                     }
                     catch (Exception)
                     {
@@ -136,7 +227,64 @@ namespace Uno.UI.Tasks.BatchMerge
                     }
                 }
 
-                mergedDictionary.MergeContent();
+                foreach (var document in documents)
+                {
+                    foreach (XNode node in document.DescendantNodes())
+                    {
+                        if (node is XElement element)
+                        {
+                            foreach (XAttribute att in element.Attributes())
+                            {
+                                if (attributesToUpdate.TryGetValue(att, out var prefix) &&
+                                    dictionary.TryGetValue(prefix, out var merged))
+                                {
+                                    att.Value = merged;
+                                }
+                                else if (propertyAttributesToUpdate.TryGetValue(att, out prefix) &&
+                                    dictionary.TryGetValue(prefix, out merged))
+                                {
+                                    var parent = att.Parent;
+                                    att.Remove();
+                                    parent.SetAttributeValue(XName.Get($"{{{merged}}}{att.Name.LocalName}"), att.Value);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                foreach (var document in documents)
+                {
+                    foreach (XNode node in document.DescendantNodes())
+                    {
+                        if (node is XElement element)
+                        {
+                            if (elementsToUpdate.TryGetValue(element, out var prefix) &&
+                                dictionary.TryGetValue(prefix, out var merged2))
+                            {
+                                element.Name = XName.Get($"{{{merged2}}}{element.Name.LocalName}");
+                            }
+                        }
+                    }
+                }
+
+                for (int i = 0; i < pages.Count; i++)
+                {
+                    var page = pages[i];
+                    var document = documents[i];
+                    try
+                    {
+                        mergedDictionary.MergeContent(
+                            content: document.ToString(),
+                            filePath: Path.GetFullPath(page)
+                                .Replace(projectBasePath, "")
+                                .TrimStart(Path.DirectorySeparatorChar));
+                    }
+                    catch (Exception)
+                    {
+                        owner.LogError($"Exception found when merging page {page}!");
+                        throw;
+                    }
+                }
 
                 mergedDictionary.FinalizeXaml();
 

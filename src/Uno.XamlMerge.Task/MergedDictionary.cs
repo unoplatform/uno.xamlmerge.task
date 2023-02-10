@@ -36,8 +36,11 @@ namespace Uno.UI.Tasks.BatchMerge
             return Utils.UnEscapeAmpersand(sw.ToString());
         }
 
-        public void Prepare(String content, string filePath)
+        public void MergeContent(String content, string filePath)
         {
+            var comment = owningDocument.CreateComment($"origin: {filePath}");
+            nodeList.Add(comment);
+
             content = Utils.EscapeAmpersand(content);
 
             var document = new XmlDocument();
@@ -53,59 +56,13 @@ namespace Uno.UI.Tasks.BatchMerge
             {
                 AddNamespace(entry.Key, entry.Value);
             }
-
-            documents.Add((document, xmlnsReplacementDictionary, filePath));
-        }
-
-        public void MergeContent()
-        {
-            foreach (var (document, xmlnsReplacementDictionary, filePath) in documents)
+            foreach (XmlNode node in document.ChildNodes)
             {
-                var comment = owningDocument.CreateComment($"origin: {filePath}");
-                nodeList.Add(comment);
-
-                foreach (XmlNode node in document.ChildNodes)
+                if (node.Name == "ResourceDictionary")
                 {
-                    if (node.Name == "ResourceDictionary")
+                    foreach (XmlNode xmlNode in node.ChildNodes)
                     {
-                        foreach (XmlNode xmlNode in node.ChildNodes)
-                        {
-                            if (xmlNode is XmlElement xmlElement)
-                            {
-                                var xmlNodeCloned = (XmlElement)xmlNode.CloneNode(true);
-                                xmlNodeCloned.RemoveAllAttributes();
-
-                                foreach (XmlAttribute xmlAttribute in xmlElement.Attributes)
-                                {
-                                    if (xmlAttribute.Name.Contains(":"))
-                                    {
-                                        var split = xmlAttribute.Name.Split(':');
-                                        var prefix = split[0];
-                                        var nsName = split[1];
-                                        if (knownNamespaces.TryGetValue(prefix, out var nsUri))
-                                        {
-                                            xmlNodeCloned.SetAttribute(nsName, nsUri, xmlAttribute.Value);
-                                        }
-                                        else
-                                        {
-                                            xmlNodeCloned.SetAttribute(xmlAttribute.Name, xmlAttribute.Value);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        xmlNodeCloned.SetAttribute(xmlAttribute.Name, xmlAttribute.Value);
-                                    }
-                                    
-                                }
-
-                                AddNode(xmlNodeCloned, xmlnsReplacementDictionary);
-                            }
-                            else
-                            {
-                                AddNode(xmlNode, xmlnsReplacementDictionary);
-                            }
-                            
-                        }
+                        AddNode(xmlNode, xmlnsReplacementDictionary);
                     }
                 }
             }
@@ -207,18 +164,12 @@ namespace Uno.UI.Tasks.BatchMerge
             }
         }
 
-
         private void AddNamespace(string xmlnsString, string namespaceString)
         {
             if (!knownNamespaces.TryGetValue(xmlnsString, out var existingNamespaceString))
             {
                 xmlElement.SetAttribute("xmlns:" + xmlnsString, namespaceString);
                 knownNamespaces.Add(xmlnsString, namespaceString);
-            }
-            else if (TryMergeHashUsings(existingNamespaceString, namespaceString, out var mergedNamespaceString))
-            {
-                xmlElement.SetAttribute("xmlns:" + xmlnsString, mergedNamespaceString);
-                knownNamespaces[xmlnsString] = mergedNamespaceString;
             }
             else
             {
@@ -228,38 +179,6 @@ namespace Uno.UI.Tasks.BatchMerge
                         $"The XML namespace [{xmlnsString}] with the value [{namespaceString}] is different than the already defined value [{existingNamespaceString}]. " +
                         $"Make sure to align all namespace defintions to the same values across merged files.");
                 }
-            }
-        }
-
-        private bool TryMergeHashUsings(string existingNamespaceString, string newNamespaceString, out string mergedNamespaceString)
-        {
-            if (existingNamespaceString.Equals(newNamespaceString, StringComparison.Ordinal))
-            {
-                // Nothing to do. Everything is fine.
-                mergedNamespaceString = null;
-                return false;
-            }
-
-            var (existingUri, existingUsings) = TryStripHashUsingToTheEnd(existingNamespaceString);
-            var (newUri, newUsings) = TryStripHashUsingToTheEnd(newNamespaceString);
-            if (!existingUri.Equals(newUri, StringComparison.Ordinal))
-            {
-                mergedNamespaceString = null;
-                return false;
-            }
-
-            mergedNamespaceString = existingUri + "#using:" + string.Join(";", existingUsings.Concat(newUsings).Distinct());
-            return true;
-
-            static (string NamespaceUri, string[] Usings) TryStripHashUsingToTheEnd(string namespaceString)
-            {
-                var indexOfHashUsing = namespaceString.IndexOf("#using:", StringComparison.Ordinal);
-                if (indexOfHashUsing == -1)
-                {
-                    return (namespaceString, Array.Empty<string>());
-                }
-
-                return (namespaceString.Substring(0, indexOfHashUsing), namespaceString.Substring(indexOfHashUsing + "#using:".Length).Split(';'));
             }
         }
 
@@ -440,7 +359,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
             foreach (XmlAttribute attribute in node.Attributes)
             {
-                if (attribute.NamespaceURI == "http://schemas.microsoft.com/winfx/2006/xaml" && attribute.LocalName is "Key" or "Name")
+                if (attribute.Name == "x:Key" || attribute.Name == "x:Name")
                 {
                     key = attribute.Value;
                     break;
@@ -568,7 +487,6 @@ namespace Uno.UI.Tasks.BatchMerge
         private XmlElement xmlElement;
         private XmlDocument owningDocument;
         private List<XmlNode> nodeList;
-        private List<(XmlDocument, Dictionary<string, string>, string)> documents = new();
 
         // We'll want to remove nodes from the node list if a child dictionary has the same node,
         // but if we just removed the nodes then the values in nodeKeyToNodeListIndexDictionary would be wrong.

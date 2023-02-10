@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Xml.Linq;
+using System.Xml;
 
 namespace Uno.UI.Tasks.BatchMerge
 {
@@ -152,40 +152,42 @@ namespace Uno.UI.Tasks.BatchMerge
                 var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(projectFullPath));
 
                 var dictionary = new Dictionary<string, string>();
-                var documents = new List<XDocument>();
+                var documents = new List<XmlDocument>();
 
                 // This dictionary handles elements, e.g, <android:MyAndroid />, where the key is the XElement
                 // and the value is the prefix (e.g, "android")
-                var elementsToUpdate = new Dictionary<XElement, string>();
+                var elementsToUpdate = new Dictionary<XmlElement, string>();
 
                 // This dictionary handles attributes that are namespace declarations, e.g xmlns:android="..."
                 // where the key is the XAttribute and the value is the namespace name (e.g, "android")
-                var attributesToUpdate = new Dictionary<XAttribute, string>();
+                var attributesToUpdate = new Dictionary<XmlAttribute, string>();
 
                 // This dictionary handles attributes that are property prefixes, e.g, <MyElement android:MyProp="Value" />
-                var propertyAttributesToUpdate = new Dictionary<XAttribute, string>();
+                var propertyAttributesToUpdate = new Dictionary<XmlAttribute, string>();
 
                 
                 foreach (string page in pages)
                 {
                     try
                     {
-                        XDocument document = XDocument.Load(page, LoadOptions.PreserveWhitespace);
-                        foreach (XNode node in document.DescendantNodes())
+                        var document = new XmlDocument();
+                        document.Load(page);
+
+                        foreach (XmlNode node in document.SelectNodes("descendant::node()"))
                         {
-                            if (node is XElement element)
+                            if (node is XmlElement element)
                             {
-                                var prefix = element.GetPrefixOfNamespace(element.Name.NamespaceName);
+                                var prefix = element.GetPrefixOfNamespace(element.NamespaceURI);
                                 if (prefix is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
                                 {
                                     elementsToUpdate.Add(element, prefix);
                                 }
 
-                                foreach (XAttribute att in element.Attributes())
+                                foreach (XmlAttribute att in element.Attributes)
                                 {
-                                    if (att.IsNamespaceDeclaration && att.Name.NamespaceName == "http://www.w3.org/2000/xmlns/")
+                                    if (att.Name.StartsWith("xmlns:"))
                                     {
-                                        string name = att.Name.LocalName;
+                                        string name = att.LocalName;
                                         if (name is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
                                         {
                                             attributesToUpdate.Add(att, name);
@@ -208,7 +210,7 @@ namespace Uno.UI.Tasks.BatchMerge
                                     }
                                     else
                                     {
-                                        var attributePrefix = element.GetPrefixOfNamespace(att.Name.NamespaceName);
+                                        var attributePrefix = element.GetPrefixOfNamespace(att.NamespaceURI);
                                         if (attributePrefix is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
                                         {
                                             propertyAttributesToUpdate.Add(att, attributePrefix);
@@ -229,11 +231,11 @@ namespace Uno.UI.Tasks.BatchMerge
 
                 foreach (var document in documents)
                 {
-                    foreach (XNode node in document.DescendantNodes())
+                    foreach (XmlNode node in document.SelectNodes("descendant::node()"))
                     {
-                        if (node is XElement element)
+                        if (node is XmlElement element)
                         {
-                            foreach (XAttribute att in element.Attributes())
+                            foreach (XmlAttribute att in element.Attributes)
                             {
                                 if (attributesToUpdate.TryGetValue(att, out var prefix) &&
                                     dictionary.TryGetValue(prefix, out var merged))
@@ -243,9 +245,15 @@ namespace Uno.UI.Tasks.BatchMerge
                                 else if (propertyAttributesToUpdate.TryGetValue(att, out prefix) &&
                                     dictionary.TryGetValue(prefix, out merged))
                                 {
-                                    var parent = att.Parent;
-                                    att.Remove();
-                                    parent.SetAttributeValue(XName.Get($"{{{merged}}}{att.Name.LocalName}"), att.Value);
+                                    var ownerElement = att.OwnerElement;
+                                    var attributes = ownerElement.Attributes;
+                                    ownerElement.RemoveAllAttributes();
+                                    foreach (XmlAttribute oldAtt in attributes)
+                                    {
+                                        ownerElement.SetAttributeNode(oldAtt);
+                                    }
+
+                                    ownerElement.SetAttribute(att.LocalName, merged, att.Value);
                                 }
                             }
                         }
@@ -254,14 +262,25 @@ namespace Uno.UI.Tasks.BatchMerge
 
                 foreach (var document in documents)
                 {
-                    foreach (XNode node in document.DescendantNodes())
+                    foreach (XmlNode node in document.SelectNodes("descendant::node()"))
                     {
-                        if (node is XElement element)
+                        if (node is XmlElement element)
                         {
                             if (elementsToUpdate.TryGetValue(element, out var prefix) &&
                                 dictionary.TryGetValue(prefix, out var merged2))
                             {
-                                element.Name = XName.Get($"{{{merged2}}}{element.Name.LocalName}");
+                                var newElement = document.CreateElement(element.Prefix, element.LocalName, merged2);
+
+                                foreach (XmlNode oldNode in element.ChildNodes)
+                                {
+                                    newElement.AppendChild(oldNode);
+                                }
+                                foreach (XmlAttribute oldAttribute in element.Attributes.Cast<XmlAttribute>().ToArray())
+                                {
+                                    newElement.Attributes.Append(oldAttribute);
+                                }
+
+                                element.ParentNode.ReplaceChild(newElement, element);
                             }
                         }
                     }
@@ -274,7 +293,7 @@ namespace Uno.UI.Tasks.BatchMerge
                     try
                     {
                         mergedDictionary.MergeContent(
-                            content: document.ToString(),
+                            content: document.OuterXml,
                             filePath: Path.GetFullPath(page)
                                 .Replace(projectBasePath, "")
                                 .TrimStart(Path.DirectorySeparatorChar));

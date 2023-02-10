@@ -229,6 +229,8 @@ namespace Uno.UI.Tasks.BatchMerge
                     }
                 }
 
+                // TODO: Maybe document traversal is not necessary?
+                // We could just loop through the dictionaries and do the same logic.
                 foreach (var document in documents)
                 {
                     foreach (XmlNode node in document.SelectNodes("descendant::node()"))

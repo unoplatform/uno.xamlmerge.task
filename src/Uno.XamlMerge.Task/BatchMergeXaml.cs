@@ -229,62 +229,46 @@ namespace Uno.UI.Tasks.BatchMerge
                     }
                 }
 
-                // TODO: Maybe document traversal is not necessary?
-                // We could just loop through the dictionaries and do the same logic.
-                foreach (var document in documents)
+                foreach (var attributeToUpdate in attributesToUpdate)
                 {
-                    foreach (XmlNode node in document.SelectNodes("descendant::node()"))
+                    if (dictionary.TryGetValue(attributeToUpdate.Value, out var merged))
                     {
-                        if (node is XmlElement element)
-                        {
-                            foreach (XmlAttribute att in element.Attributes)
-                            {
-                                if (attributesToUpdate.TryGetValue(att, out var prefix) &&
-                                    dictionary.TryGetValue(prefix, out var merged))
-                                {
-                                    att.Value = merged;
-                                }
-                                else if (propertyAttributesToUpdate.TryGetValue(att, out prefix) &&
-                                    dictionary.TryGetValue(prefix, out merged))
-                                {
-                                    var ownerElement = att.OwnerElement;
-                                    var attributes = ownerElement.Attributes;
-                                    ownerElement.RemoveAllAttributes();
-                                    foreach (XmlAttribute oldAtt in attributes)
-                                    {
-                                        ownerElement.SetAttributeNode(oldAtt);
-                                    }
-
-                                    ownerElement.SetAttribute(att.LocalName, merged, att.Value);
-                                }
-                            }
-                        }
+                        attributeToUpdate.Key.Value = merged;
                     }
                 }
 
-                foreach (var document in documents)
+                foreach (var propertyAttributeToUpdate in propertyAttributesToUpdate)
                 {
-                    foreach (XmlNode node in document.SelectNodes("descendant::node()"))
+                    if (dictionary.TryGetValue(propertyAttributeToUpdate.Value, out var merged))
                     {
-                        if (node is XmlElement element)
+                        var ownerElement = propertyAttributeToUpdate.Key.OwnerElement;
+                        var attributes = ownerElement.Attributes;
+                        ownerElement.RemoveAllAttributes();
+                        foreach (XmlAttribute oldAtt in attributes)
                         {
-                            if (elementsToUpdate.TryGetValue(element, out var prefix) &&
-                                dictionary.TryGetValue(prefix, out var merged2))
-                            {
-                                var newElement = document.CreateElement(element.Prefix, element.LocalName, merged2);
-
-                                foreach (XmlNode oldNode in element.ChildNodes)
-                                {
-                                    newElement.AppendChild(oldNode);
-                                }
-                                foreach (XmlAttribute oldAttribute in element.Attributes.Cast<XmlAttribute>().ToArray())
-                                {
-                                    newElement.Attributes.Append(oldAttribute);
-                                }
-
-                                element.ParentNode.ReplaceChild(newElement, element);
-                            }
+                            ownerElement.SetAttributeNode(oldAtt);
                         }
+
+                        ownerElement.SetAttribute(propertyAttributeToUpdate.Key.LocalName, merged, propertyAttributeToUpdate.Key.Value);
+                    }
+                }
+
+                foreach (var elementToUpdate in elementsToUpdate)
+                {
+                    if (dictionary.TryGetValue(elementToUpdate.Value, out var merged))
+                    {
+                        var newElement = elementToUpdate.Key.OwnerDocument.CreateElement(elementToUpdate.Key.Prefix, elementToUpdate.Key.LocalName, merged);
+
+                        foreach (XmlNode oldNode in elementToUpdate.Key.ChildNodes)
+                        {
+                            newElement.AppendChild(oldNode);
+                        }
+                        foreach (XmlAttribute oldAttribute in elementToUpdate.Key.Attributes.Cast<XmlAttribute>().ToArray())
+                        {
+                            newElement.Attributes.Append(oldAttribute);
+                        }
+
+                        elementToUpdate.Key.ParentNode.ReplaceChild(newElement, elementToUpdate.Key);
                     }
                 }
 

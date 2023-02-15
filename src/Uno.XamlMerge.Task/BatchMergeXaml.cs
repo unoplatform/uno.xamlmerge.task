@@ -262,7 +262,7 @@ namespace Uno.UI.Tasks.BatchMerge
                     {
                         var newElement = elementToUpdate.Key.OwnerDocument.CreateElement(elementToUpdate.Key.Prefix, elementToUpdate.Key.LocalName, merged);
 
-                        foreach (XmlNode oldNode in elementToUpdate.Key.ChildNodes)
+                        foreach (XmlNode oldNode in elementToUpdate.Key.ChildNodes.Cast<XmlNode>().ToArray())
                         {
                             newElement.AppendChild(oldNode);
                         }

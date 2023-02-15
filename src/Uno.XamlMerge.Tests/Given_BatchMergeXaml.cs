@@ -220,7 +220,24 @@ public class Given_BatchMergeXaml
             .Distinct()
             .Select(f => new TaskItem(Path.Combine(basePath, "Output", f)))
             .ToArray();
-
+        task.XamlNamespaces = new TaskItem[]
+        {
+            new("xamarin"),
+            new("not_win"),
+            new("legacy"),
+            new("ios"),
+            new("not_ios"),
+            new("android"),
+            new("not_android"),
+            new("skia"),
+            new("not_skia"),
+            new("wasm"),
+            new("not_wasm"),
+            new("macos"),
+            new("not_macos"),
+            new("netstdref"),
+            new("not_netstdref"),
+        };
         return task;
     }
 

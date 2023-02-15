@@ -26,6 +26,9 @@ namespace Uno.UI.Tasks.BatchMerge
         public ITaskItem[] MergedXamlFiles { get; set; }
 
         [Required]
+        public ITaskItem[] XamlNamespaces { get; set; }
+
+        [Required]
         public string ProjectFullPath { get; set; }
 
         [Output]
@@ -43,6 +46,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
             var filteredPages = Pages.ToList();
             filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m)));
+            var xamlNamespaces = XamlNamespaces.Select(item => item.ItemSpec).ToArray();
 
             if (MergedXamlFiles.Length > 1)
             {
@@ -53,6 +57,7 @@ namespace Uno.UI.Tasks.BatchMerge
                     BatchMerger.Merge(this,
                           mergedXamlFile.ItemSpec,
                           ProjectFullPath,
+                          xamlNamespaces,
                           filteredPages.Where(p => string.Equals(p.GetMetadata("MergeFile"), mergeFileName, StringComparison.OrdinalIgnoreCase)).ToArray());
                 }
             }
@@ -63,6 +68,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 BatchMerger.Merge(this,
                         MergedXamlFiles[0].ItemSpec,
                         ProjectFullPath,
+                        xamlNamespaces,
                         filteredPages.ToArray());
             }
 
@@ -120,6 +126,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 CustomTask owner,
                 string mergedXamlFile,
                 string projectFullPath,
+                string[] xamlNamespaces,
                 ITaskItem[] pageItems)
             {
                 var mergedDictionary = MergedDictionary.CreateMergedDicionary();
@@ -178,7 +185,7 @@ namespace Uno.UI.Tasks.BatchMerge
                             if (node is XmlElement element)
                             {
                                 var prefix = element.GetPrefixOfNamespace(element.NamespaceURI);
-                                if (prefix is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
+                                if (xamlNamespaces.Contains(prefix))
                                 {
                                     elementsToUpdate.Add(element, prefix);
                                 }
@@ -188,7 +195,7 @@ namespace Uno.UI.Tasks.BatchMerge
                                     if (att.Name.StartsWith("xmlns:"))
                                     {
                                         string name = att.LocalName;
-                                        if (name is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
+                                        if (xamlNamespaces.Contains(name))
                                         {
                                             attributesToUpdate.Add(att, name);
                                             if (dictionary.TryGetValue(name, out var existing))
@@ -211,7 +218,7 @@ namespace Uno.UI.Tasks.BatchMerge
                                     else
                                     {
                                         var attributePrefix = element.GetPrefixOfNamespace(att.NamespaceURI);
-                                        if (attributePrefix is "xamarin" or "not_win" or "android" or "ios" or "wasm" or "macos" or "skia")
+                                        if (xamlNamespaces.Contains(attributePrefix))
                                         {
                                             propertyAttributesToUpdate.Add(att, attributePrefix);
                                         }

@@ -138,6 +138,16 @@ public class Given_BatchMergeXaml
         ValidateOutput(task);
     }
 
+    [TestMethod]
+    public void When_Different_Namespace_Should_Be_Merged_With_Members()
+    {
+        var task = CreateMerger();
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
     private void ValidateOutput(BatchMergeXaml_v0 task, [CallerMemberName] string testName = "")
     {
         var basePath = GetBasePath(testName);
@@ -210,7 +220,24 @@ public class Given_BatchMergeXaml
             .Distinct()
             .Select(f => new TaskItem(Path.Combine(basePath, "Output", f)))
             .ToArray();
-
+        task.XamlNamespaces = new TaskItem[]
+        {
+            new("xamarin"),
+            new("not_win"),
+            new("legacy"),
+            new("ios"),
+            new("not_ios"),
+            new("android"),
+            new("not_android"),
+            new("skia"),
+            new("not_skia"),
+            new("wasm"),
+            new("not_wasm"),
+            new("macos"),
+            new("not_macos"),
+            new("netstdref"),
+            new("not_netstdref"),
+        };
         return task;
     }
 

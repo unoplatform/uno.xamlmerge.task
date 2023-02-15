@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Xml;
 
 namespace Uno.UI.Tasks.BatchMerge
 {
@@ -23,6 +24,9 @@ namespace Uno.UI.Tasks.BatchMerge
 
         [Required]
         public ITaskItem[] MergedXamlFiles { get; set; }
+
+        [Required]
+        public ITaskItem[] XamlNamespaces { get; set; }
 
         [Required]
         public string ProjectFullPath { get; set; }
@@ -42,6 +46,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
             var filteredPages = Pages.ToList();
             filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m)));
+            var xamlNamespaces = XamlNamespaces.Select(item => item.ItemSpec).ToArray();
 
             if (MergedXamlFiles.Length > 1)
             {
@@ -52,6 +57,7 @@ namespace Uno.UI.Tasks.BatchMerge
                     BatchMerger.Merge(this,
                           mergedXamlFile.ItemSpec,
                           ProjectFullPath,
+                          xamlNamespaces,
                           filteredPages.Where(p => string.Equals(p.GetMetadata("MergeFile"), mergeFileName, StringComparison.OrdinalIgnoreCase)).ToArray());
                 }
             }
@@ -62,6 +68,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 BatchMerger.Merge(this,
                         MergedXamlFiles[0].ItemSpec,
                         ProjectFullPath,
+                        xamlNamespaces,
                         filteredPages.ToArray());
             }
 
@@ -84,10 +91,42 @@ namespace Uno.UI.Tasks.BatchMerge
 
         class BatchMerger
         {
+            private static bool TryMergeHashUsings(string existingNamespaceString, string newNamespaceString, out string mergedNamespaceString)
+            {
+                if (existingNamespaceString.Equals(newNamespaceString, StringComparison.Ordinal))
+                {
+                    mergedNamespaceString = existingNamespaceString;
+                    return true;
+                }
+
+                var (existingUri, existingUsings) = TryStripHashUsingToTheEnd(existingNamespaceString);
+                var (newUri, newUsings) = TryStripHashUsingToTheEnd(newNamespaceString);
+                if (!existingUri.Equals(newUri, StringComparison.Ordinal))
+                {
+                    mergedNamespaceString = null;
+                    return false;
+                }
+
+                mergedNamespaceString = existingUri + "#using:" + string.Join(";", existingUsings.Concat(newUsings).Distinct());
+                return true;
+
+                static (string NamespaceUri, string[] Usings) TryStripHashUsingToTheEnd(string namespaceString)
+                {
+                    var indexOfHashUsing = namespaceString.IndexOf("#using:", StringComparison.Ordinal);
+                    if (indexOfHashUsing == -1)
+                    {
+                        return (namespaceString, Array.Empty<string>());
+                    }
+
+                    return (namespaceString.Substring(0, indexOfHashUsing), namespaceString.Substring(indexOfHashUsing + "#using:".Length).Split(';'));
+                }
+            }
+
             internal static void Merge(
                 CustomTask owner,
                 string mergedXamlFile,
                 string projectFullPath,
+                string[] xamlNamespaces,
                 ITaskItem[] pageItems)
             {
                 var mergedDictionary = MergedDictionary.CreateMergedDicionary();
@@ -119,12 +158,135 @@ namespace Uno.UI.Tasks.BatchMerge
 
                 var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(projectFullPath));
 
+                var dictionary = new Dictionary<string, string>();
+                var documents = new List<XmlDocument>();
+
+                // This dictionary handles elements, e.g, <android:MyAndroid />, where the key is the XElement
+                // and the value is the prefix (e.g, "android")
+                var elementsToUpdate = new Dictionary<XmlElement, string>();
+
+                // This dictionary handles attributes that are namespace declarations, e.g xmlns:android="..."
+                // where the key is the XAttribute and the value is the namespace name (e.g, "android")
+                var attributesToUpdate = new Dictionary<XmlAttribute, string>();
+
+                // This dictionary handles attributes that are property prefixes, e.g, <MyElement android:MyProp="Value" />
+                var propertyAttributesToUpdate = new Dictionary<XmlAttribute, string>();
+
+                
                 foreach (string page in pages)
                 {
                     try
                     {
+                        var document = new XmlDocument();
+                        document.Load(page);
+
+                        foreach (XmlNode node in document.SelectNodes("descendant::node()"))
+                        {
+                            if (node is XmlElement element)
+                            {
+                                var prefix = element.GetPrefixOfNamespace(element.NamespaceURI);
+                                if (xamlNamespaces.Contains(prefix))
+                                {
+                                    elementsToUpdate.Add(element, prefix);
+                                }
+
+                                foreach (XmlAttribute att in element.Attributes)
+                                {
+                                    if (att.Name.StartsWith("xmlns:"))
+                                    {
+                                        string name = att.LocalName;
+                                        if (xamlNamespaces.Contains(name))
+                                        {
+                                            attributesToUpdate.Add(att, name);
+                                            if (dictionary.TryGetValue(name, out var existing))
+                                            {
+                                                if (TryMergeHashUsings(existing, att.Value, out var merged))
+                                                {
+                                                    dictionary[name] = merged;
+                                                }
+                                                else
+                                                {
+                                                    throw new Exception($"Cannot merge '{existing}' with '{att.Value}' for '{name}'");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                dictionary.Add(name, att.Value);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        var attributePrefix = element.GetPrefixOfNamespace(att.NamespaceURI);
+                                        if (xamlNamespaces.Contains(attributePrefix))
+                                        {
+                                            propertyAttributesToUpdate.Add(att, attributePrefix);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        documents.Add(document);
+                    }
+                    catch (Exception)
+                    {
+                        owner.LogError($"Exception found when merging namespaces for page {page}!");
+                        throw;
+                    }
+                }
+
+                foreach (var attributeToUpdate in attributesToUpdate)
+                {
+                    if (dictionary.TryGetValue(attributeToUpdate.Value, out var merged))
+                    {
+                        attributeToUpdate.Key.Value = merged;
+                    }
+                }
+
+                foreach (var propertyAttributeToUpdate in propertyAttributesToUpdate)
+                {
+                    if (dictionary.TryGetValue(propertyAttributeToUpdate.Value, out var merged))
+                    {
+                        var ownerElement = propertyAttributeToUpdate.Key.OwnerElement;
+                        var attributes = ownerElement.Attributes;
+                        ownerElement.RemoveAllAttributes();
+                        foreach (XmlAttribute oldAtt in attributes)
+                        {
+                            ownerElement.SetAttributeNode(oldAtt);
+                        }
+
+                        ownerElement.SetAttribute(propertyAttributeToUpdate.Key.LocalName, merged, propertyAttributeToUpdate.Key.Value);
+                    }
+                }
+
+                foreach (var elementToUpdate in elementsToUpdate)
+                {
+                    if (dictionary.TryGetValue(elementToUpdate.Value, out var merged))
+                    {
+                        var newElement = elementToUpdate.Key.OwnerDocument.CreateElement(elementToUpdate.Key.Prefix, elementToUpdate.Key.LocalName, merged);
+
+                        foreach (XmlNode oldNode in elementToUpdate.Key.ChildNodes)
+                        {
+                            newElement.AppendChild(oldNode);
+                        }
+                        foreach (XmlAttribute oldAttribute in elementToUpdate.Key.Attributes.Cast<XmlAttribute>().ToArray())
+                        {
+                            newElement.Attributes.Append(oldAttribute);
+                        }
+
+                        elementToUpdate.Key.ParentNode.ReplaceChild(newElement, elementToUpdate.Key);
+                    }
+                }
+
+                for (int i = 0; i < pages.Count; i++)
+                {
+                    var page = pages[i];
+                    var document = documents[i];
+                    try
+                    {
                         mergedDictionary.MergeContent(
-                            content: File.ReadAllText(page),
+                            content: document.OuterXml,
                             filePath: Path.GetFullPath(page)
                                 .Replace(projectBasePath, "")
                                 .TrimStart(Path.DirectorySeparatorChar));

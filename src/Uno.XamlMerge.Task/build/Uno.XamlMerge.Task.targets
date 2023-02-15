@@ -15,6 +15,7 @@
 		<BatchMergeXaml_v0
 			ProjectFullPath="$(MSBuildProjectFullPath)"
 			Pages="@(XamlMergeInput)"
+			XamlNamespaces="@(IncludeXamlNamespaces);@(ExcludeXamlNamespaces)"
 			MergedXamlFiles="@(XamlMergeOutputFiles)" />
 		<Message Text="Merged resources XAML file was generated in $(XamlMergeOutputFile)" />
 

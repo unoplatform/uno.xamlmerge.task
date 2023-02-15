@@ -164,18 +164,12 @@ namespace Uno.UI.Tasks.BatchMerge
             }
         }
 
-
         private void AddNamespace(string xmlnsString, string namespaceString)
         {
             if (!knownNamespaces.TryGetValue(xmlnsString, out var existingNamespaceString))
             {
                 xmlElement.SetAttribute("xmlns:" + xmlnsString, namespaceString);
                 knownNamespaces.Add(xmlnsString, namespaceString);
-            }
-            else if (TryMergeHashUsings(existingNamespaceString, namespaceString, out var mergedNamespaceString))
-            {
-                xmlElement.SetAttribute("xmlns:" + xmlnsString, mergedNamespaceString);
-                knownNamespaces[xmlnsString] = mergedNamespaceString;
             }
             else
             {
@@ -185,38 +179,6 @@ namespace Uno.UI.Tasks.BatchMerge
                         $"The XML namespace [{xmlnsString}] with the value [{namespaceString}] is different than the already defined value [{existingNamespaceString}]. " +
                         $"Make sure to align all namespace defintions to the same values across merged files.");
                 }
-            }
-        }
-
-        private bool TryMergeHashUsings(string existingNamespaceString, string newNamespaceString, out string mergedNamespaceString)
-        {
-            if (existingNamespaceString.Equals(newNamespaceString, StringComparison.Ordinal))
-            {
-                // Nothing to do. Everything is fine.
-                mergedNamespaceString = null;
-                return false;
-            }
-
-            var (existingUri, existingUsings) = TryStripHashUsingToTheEnd(existingNamespaceString);
-            var (newUri, newUsings) = TryStripHashUsingToTheEnd(newNamespaceString);
-            if (!existingUri.Equals(newUri, StringComparison.Ordinal))
-            {
-                mergedNamespaceString = null;
-                return false;
-            }
-
-            mergedNamespaceString = existingUri + "#using:" + string.Join(";", existingUsings.Concat(newUsings).Distinct());
-            return true;
-
-            static (string NamespaceUri, string[] Usings) TryStripHashUsingToTheEnd(string namespaceString)
-            {
-                var indexOfHashUsing = namespaceString.IndexOf("#using:", StringComparison.Ordinal);
-                if (indexOfHashUsing == -1)
-                {
-                    return (namespaceString, Array.Empty<string>());
-                }
-
-                return (namespaceString.Substring(0, indexOfHashUsing), namespaceString.Substring(indexOfHashUsing + "#using:".Length).Split(';'));
             }
         }
 

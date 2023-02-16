@@ -6,6 +6,6 @@
   xmlns:android="http://uno.ui/android#using:AndroidNS"
   xmlns:ios="http://uno.ui/ios">
 
-  <MyElement1 x:Name="Name" android:MyProp1="P1" ios:MyProp2="P2" />
+  <MyElement1 x:Name="Name" android:MyProp1="P1 - &#xE735;" ios:MyProp2="P2" />
 
 </ResourceDictionary>

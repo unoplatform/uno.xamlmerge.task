@@ -251,8 +251,10 @@ namespace Uno.UI.Tasks.BatchMerge
                     if (dictionary.TryGetValue(propertyAttributeToUpdate.Value, out var merged))
                     {
                         var ownerElement = propertyAttributeToUpdate.Key.OwnerElement;
+                        var newAttribute = ownerElement.OwnerDocument.CreateAttribute(propertyAttributeToUpdate.Key.Prefix, propertyAttributeToUpdate.Key.LocalName, merged);
+                        newAttribute.Value = propertyAttributeToUpdate.Key.Value;
+                        ownerElement.Attributes.InsertAfter(newNode: newAttribute, refNode: propertyAttributeToUpdate.Key);
                         ownerElement.RemoveAttributeNode(propertyAttributeToUpdate.Key);
-                        ownerElement.SetAttribute(propertyAttributeToUpdate.Key.LocalName, merged, propertyAttributeToUpdate.Key.Value);
                     }
                 }
 

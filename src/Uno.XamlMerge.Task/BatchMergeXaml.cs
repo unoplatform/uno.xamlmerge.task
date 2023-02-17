@@ -178,7 +178,9 @@ namespace Uno.UI.Tasks.BatchMerge
                     try
                     {
                         var document = new XmlDocument();
-                        document.Load(page);
+                        var pageContent = File.ReadAllText(page);
+                        pageContent = Utils.EscapeAmpersand(pageContent);
+                        document.LoadXml(pageContent);
 
                         foreach (XmlNode node in document.SelectNodes("descendant::node()"))
                         {
@@ -249,14 +251,10 @@ namespace Uno.UI.Tasks.BatchMerge
                     if (dictionary.TryGetValue(propertyAttributeToUpdate.Value, out var merged))
                     {
                         var ownerElement = propertyAttributeToUpdate.Key.OwnerElement;
-                        var attributes = ownerElement.Attributes;
-                        ownerElement.RemoveAllAttributes();
-                        foreach (XmlAttribute oldAtt in attributes)
-                        {
-                            ownerElement.SetAttributeNode(oldAtt);
-                        }
-
-                        ownerElement.SetAttribute(propertyAttributeToUpdate.Key.LocalName, merged, propertyAttributeToUpdate.Key.Value);
+                        var newAttribute = ownerElement.OwnerDocument.CreateAttribute(propertyAttributeToUpdate.Key.Prefix, propertyAttributeToUpdate.Key.LocalName, merged);
+                        newAttribute.Value = propertyAttributeToUpdate.Key.Value;
+                        ownerElement.Attributes.InsertAfter(newNode: newAttribute, refNode: propertyAttributeToUpdate.Key);
+                        ownerElement.RemoveAttributeNode(propertyAttributeToUpdate.Key);
                     }
                 }
 
@@ -266,7 +264,7 @@ namespace Uno.UI.Tasks.BatchMerge
                     {
                         var newElement = elementToUpdate.Key.OwnerDocument.CreateElement(elementToUpdate.Key.Prefix, elementToUpdate.Key.LocalName, merged);
 
-                        foreach (XmlNode oldNode in elementToUpdate.Key.ChildNodes)
+                        foreach (XmlNode oldNode in elementToUpdate.Key.ChildNodes.Cast<XmlNode>().ToArray())
                         {
                             newElement.AppendChild(oldNode);
                         }

@@ -41,7 +41,7 @@ namespace Uno.UI.Tasks.BatchMerge
             var comment = owningDocument.CreateComment($"origin: {filePath}");
             nodeList.Add(comment);
 
-            content = Utils.EscapeAmpersand(content);
+            //content = Utils.EscapeAmpersand(content); Done by caller now.
 
             var document = new XmlDocument();
             document.LoadXml(content);

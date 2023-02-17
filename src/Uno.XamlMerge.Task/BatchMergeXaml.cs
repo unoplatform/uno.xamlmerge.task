@@ -26,9 +26,6 @@ namespace Uno.UI.Tasks.BatchMerge
         public ITaskItem[] MergedXamlFiles { get; set; }
 
         [Required]
-        public ITaskItem[] XamlNamespaces { get; set; }
-
-        [Required]
         public string ProjectFullPath { get; set; }
 
         [Output]
@@ -46,7 +43,6 @@ namespace Uno.UI.Tasks.BatchMerge
 
             var filteredPages = Pages.ToList();
             filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m)));
-            var xamlNamespaces = XamlNamespaces.Select(item => item.ItemSpec).ToArray();
 
             if (MergedXamlFiles.Length > 1)
             {
@@ -57,7 +53,6 @@ namespace Uno.UI.Tasks.BatchMerge
                     BatchMerger.Merge(this,
                           mergedXamlFile.ItemSpec,
                           ProjectFullPath,
-                          xamlNamespaces,
                           filteredPages.Where(p => string.Equals(p.GetMetadata("MergeFile"), mergeFileName, StringComparison.OrdinalIgnoreCase)).ToArray());
                 }
             }
@@ -68,7 +63,6 @@ namespace Uno.UI.Tasks.BatchMerge
                 BatchMerger.Merge(this,
                         MergedXamlFiles[0].ItemSpec,
                         ProjectFullPath,
-                        xamlNamespaces,
                         filteredPages.ToArray());
             }
 
@@ -126,7 +120,6 @@ namespace Uno.UI.Tasks.BatchMerge
                 CustomTask owner,
                 string mergedXamlFile,
                 string projectFullPath,
-                string[] xamlNamespaces,
                 ITaskItem[] pageItems)
             {
                 var mergedDictionary = MergedDictionary.CreateMergedDicionary();
@@ -182,12 +175,20 @@ namespace Uno.UI.Tasks.BatchMerge
                         pageContent = Utils.EscapeAmpersand(pageContent);
                         document.LoadXml(pageContent);
 
+                        string[] ignorables = Array.Empty<string>();
                         foreach (XmlNode node in document.SelectNodes("descendant::node()"))
                         {
+                            if (node.ParentNode.NodeType == XmlNodeType.Document &&
+                                node.Attributes is not null &&
+                                node.Attributes["Ignorable", "http://schemas.openxmlformats.org/markup-compatibility/2006"] is { } ignorableAttribute)
+                            {
+                                ignorables = ignorableAttribute.Value.Split(' ');
+                            }
+
                             if (node is XmlElement element)
                             {
                                 var prefix = element.GetPrefixOfNamespace(element.NamespaceURI);
-                                if (xamlNamespaces.Contains(prefix))
+                                if (ignorables.Contains(prefix))
                                 {
                                     elementsToUpdate.Add(element, prefix);
                                 }
@@ -197,7 +198,7 @@ namespace Uno.UI.Tasks.BatchMerge
                                     if (att.Name.StartsWith("xmlns:"))
                                     {
                                         string name = att.LocalName;
-                                        if (xamlNamespaces.Contains(name))
+                                        if (ignorables.Contains(name))
                                         {
                                             attributesToUpdate.Add(att, name);
                                             if (dictionary.TryGetValue(name, out var existing))
@@ -220,7 +221,7 @@ namespace Uno.UI.Tasks.BatchMerge
                                     else
                                     {
                                         var attributePrefix = element.GetPrefixOfNamespace(att.NamespaceURI);
-                                        if (xamlNamespaces.Contains(attributePrefix))
+                                        if (ignorables.Contains(attributePrefix))
                                         {
                                             propertyAttributesToUpdate.Add(att, attributePrefix);
                                         }

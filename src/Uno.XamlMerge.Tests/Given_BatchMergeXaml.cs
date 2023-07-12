@@ -38,6 +38,14 @@ public class Given_BatchMergeXaml
     }
 
     [TestMethod]
+    public void When_Different_Properties_Different_Namespaces()
+    {
+        var task = CreateMerger();
+
+        task.Execute(); // Shouldn't throw an exception
+    }
+
+    [TestMethod]
     public void When_Duplicate_Keys_Different_Namespace_Single_Input()
     {
         var task = CreateMerger();

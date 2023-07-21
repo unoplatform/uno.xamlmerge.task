@@ -1,0 +1,10 @@
+<ResourceDictionary xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="skia" xmlns:skia="http://uno.ui/skia" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <!--origin: When_Different_Attributes_Different_Namespaces_Platform_Specific_first\Input_Dictionary.xml-->
+  <Style TargetType="ScrollViewer">
+    <Setter Property="Template">
+      <Setter.Value>
+        <ScrollBar skia:Width="16" Height="16" />
+      </Setter.Value>
+    </Setter>
+  </Style>
+</ResourceDictionary>

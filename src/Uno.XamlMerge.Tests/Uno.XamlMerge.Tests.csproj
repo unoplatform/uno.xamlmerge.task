@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFrameworks>net6.0;net461</TargetFrameworks>
-    <LangVersion>11</LangVersion>
+    <LangVersion>10</LangVersion>
     <Nullable>enable</Nullable>
 
     <IsPackable>false</IsPackable>

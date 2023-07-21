@@ -42,7 +42,9 @@ public class Given_BatchMergeXaml
     {
         var task = CreateMerger();
 
-        task.Execute(); // Shouldn't throw an exception
+        task.Execute();
+        
+        ValidateOutput(task);
     }
 
     [TestMethod]

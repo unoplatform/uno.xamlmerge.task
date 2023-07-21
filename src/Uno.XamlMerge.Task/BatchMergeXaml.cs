@@ -254,8 +254,22 @@ namespace Uno.UI.Tasks.BatchMerge
                         var ownerElement = propertyAttributeToUpdate.Key.OwnerElement;
                         var newAttribute = ownerElement.OwnerDocument.CreateAttribute(propertyAttributeToUpdate.Key.Prefix, propertyAttributeToUpdate.Key.LocalName, merged);
                         newAttribute.Value = propertyAttributeToUpdate.Key.Value;
-                        ownerElement.Attributes.InsertAfter(newNode: newAttribute, refNode: propertyAttributeToUpdate.Key);
-                        ownerElement.RemoveAttributeNode(propertyAttributeToUpdate.Key);
+                        
+                        var refNode = propertyAttributeToUpdate.Key;
+                        
+                        if (newAttribute.Name == refNode.Name || newAttribute.NamespaceURI == refNode.NamespaceURI)
+                        {
+                            // This is a workaround for a bug in net461's InsertAfter that crashes if refNode has the same name as newAttribute
+                            // If refNode and newAttribute are duplicates, it doesn't matter whether we insert before or after,
+                            // since refNode will be removed before the insertion anyway.
+                            ownerElement.Attributes.InsertBefore(newNode: newAttribute, refNode);
+                        }
+                        else
+                        {
+                            ownerElement.Attributes.InsertAfter(newNode: newAttribute, refNode);
+                        }
+
+                        ownerElement.RemoveAttributeNode(refNode);
                     }
                 }
 

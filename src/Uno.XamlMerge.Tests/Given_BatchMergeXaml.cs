@@ -38,7 +38,17 @@ public class Given_BatchMergeXaml
     }
 
     [TestMethod]
-    public void When_Different_Properties_Different_Namespaces()
+    public void When_Different_Attributes_Different_Namespaces()
+    {
+        var task = CreateMerger();
+
+        task.Execute();
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_Different_Attributes_Different_Namespaces_Platform_Specific_first()
     {
         var task = CreateMerger();
 

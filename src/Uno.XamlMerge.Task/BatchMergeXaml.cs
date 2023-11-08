@@ -29,6 +29,9 @@ namespace Uno.UI.Tasks.BatchMerge
         [Required]
         public string ProjectFullPath { get; set; }
 
+        [Required]
+        public string AssemblyName { get; set; }
+
         public bool IsHotReloadEnabled { get; set; }
 
         [Output]
@@ -98,7 +101,7 @@ namespace Uno.UI.Tasks.BatchMerge
             {
                 var pagePath = Path.GetFullPath(page.ItemSpec).Replace(projectBasePath, "").TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
                 builder.Append($"""
-                                    <ResourceDictionary Source="ms-appx:///{pagePath}" />
+                                    <ResourceDictionary Source="ms-appx:///{AssemblyName}/{pagePath}" />
 
                             """);
             }

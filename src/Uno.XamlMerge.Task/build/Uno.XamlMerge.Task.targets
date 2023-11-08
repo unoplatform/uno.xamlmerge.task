@@ -20,6 +20,7 @@
 			ProjectFullPath="$(MSBuildProjectFullPath)"
 			Pages="@(XamlMergeInput)"
 			IsHotReloadEnabled="$(BatchMergeGenerateForHotReload)"
+			AssemblyName="$(AssemblyName)"
 			MergedXamlFiles="@(XamlMergeOutputFiles)" />
 		<Message Text="Merged resources XAML file was generated in $(XamlMergeOutputFile)" />
 

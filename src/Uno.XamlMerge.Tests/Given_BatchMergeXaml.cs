@@ -375,6 +375,7 @@ public class Given_BatchMergeXaml
             .Select(f => new TaskItem(Path.Combine(basePath, "Output", f)))
             .ToArray();
         task.IsHotReloadEnabled = isHotReloadEnabled;
+        task.AssemblyName = "TestAssemblyName";
         return task;
     }
 

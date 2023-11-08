@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Xml;
 
 namespace Uno.UI.Tasks.BatchMerge
@@ -28,6 +29,8 @@ namespace Uno.UI.Tasks.BatchMerge
         [Required]
         public string ProjectFullPath { get; set; }
 
+        public bool IsHotReloadEnabled { get; set; }
+
         [Output]
         public string[] FilesWritten
             => _filesWritten.ToArray();
@@ -43,6 +46,12 @@ namespace Uno.UI.Tasks.BatchMerge
 
             var filteredPages = Pages.ToList();
             filteredPages.RemoveAll(e => MergedXamlFiles.Any(m => FullPathComparer.Default.Equals(e, m)));
+
+            if (IsHotReloadEnabled)
+            {
+                GenerateForHotReload(filteredPages);
+                return !HasLoggedErrors;
+            }
 
             if (MergedXamlFiles.Length > 1)
             {
@@ -67,6 +76,71 @@ namespace Uno.UI.Tasks.BatchMerge
             }
 
             return !HasLoggedErrors;
+        }
+
+        private string GenerateMergedDictionariesForHotReload(IEnumerable<ITaskItem> filteredPages)
+        {
+            var projectBasePath = Path.GetDirectoryName(Path.GetFullPath(ProjectFullPath));
+
+            var builder = new StringBuilder();
+            builder.Append("""
+                        <!-- Generating a resource dictionary that references existing dictionaries for HotReload support -->
+                        <!-- Proper merging of XAML files will happen if you build in Release configuration -->
+                        <ResourceDictionary
+                            xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+                            <ResourceDictionary.MergedDictionaries>
+
+                        """);
+
+            foreach (var page in filteredPages)
+            {
+                var pagePath = Path.GetFullPath(page.ItemSpec).Replace(projectBasePath, "").TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
+                builder.Append($"""
+                                    <ResourceDictionary Source="ms-appx:///{pagePath}" />
+
+                            """);
+            }
+
+            builder.Append("""
+                            </ResourceDictionary.MergedDictionaries>
+                        </ResourceDictionary>
+
+                        """);
+
+            return builder.ToString();
+        }
+
+        /// <summary>
+        /// When HotReload is enabled, we want modifications to the original XAML files to be reflected.
+        /// This cannot be achieved when an actual merge happens.
+        /// So, for HotReload, we'll generate a XAML file that only references the original XAML files and not do an actual merge.
+        /// This way, it can work with HotReload perfectly.
+        /// </summary>
+        private void GenerateForHotReload(List<ITaskItem> filteredPages)
+        {
+            if (MergedXamlFiles.Length > 1)
+            {
+                foreach (var mergedXamlFile in MergedXamlFiles)
+                {
+                    var mergeFileName = Path.GetFileName(mergedXamlFile.ItemSpec);
+                    string fileContents = GenerateMergedDictionariesForHotReload(filteredPages.Where(p => string.Equals(p.GetMetadata("MergeFile"), mergeFileName, StringComparison.OrdinalIgnoreCase)));
+
+                    Directory.CreateDirectory(Path.GetDirectoryName(mergedXamlFile.ItemSpec));
+                    Utils.RewriteFileIfNecessary(mergedXamlFile.ItemSpec, fileContents);
+                }
+            }
+            else if (MergedXamlFiles.Length == 1)
+            {
+                // Single target file, without "MergeFile" attribution
+                var mergedXamlFile = MergedXamlFiles[0];
+                var mergeFileName = Path.GetFileName(mergedXamlFile.ItemSpec);
+                string fileContents = GenerateMergedDictionariesForHotReload(filteredPages);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(mergedXamlFile.ItemSpec));
+                Utils.RewriteFileIfNecessary(mergedXamlFile.ItemSpec, fileContents);
+            }
         }
 
         private void ValidatePageMergeFileMetadata()

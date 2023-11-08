@@ -28,6 +28,16 @@ public class Given_BatchMergeXaml
     }
 
     [TestMethod]
+    public void When_HR_Enabled()
+    {
+        var task = CreateMerger(isHotReloadEnabled: true);
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
     public void When_Key_TargeType_Conflict()
     {
         var task = CreateMerger();
@@ -324,7 +334,7 @@ public class Given_BatchMergeXaml
         }
     }
 
-    private BatchMergeXaml_v0 CreateMerger([CallerMemberName] string testName = "")
+    private BatchMergeXaml_v0 CreateMerger(bool isHotReloadEnabled = false, [CallerMemberName] string testName = "")
     {
         var basePath = GetBasePath(testName);
 
@@ -364,6 +374,7 @@ public class Given_BatchMergeXaml
             .Distinct()
             .Select(f => new TaskItem(Path.Combine(basePath, "Output", f)))
             .ToArray();
+        task.IsHotReloadEnabled = isHotReloadEnabled;
         return task;
     }
 

@@ -6,7 +6,7 @@ This code is derived from WinUI's [`BatchMergeXaml`](https://github.com/microsof
 ## Why merge ResourceDictionary instances ?
 This task is generally used to allow for separate resource dictionary authoring (which makes them easier to load and read) to avoid impacting resources lookup runtime performance. In WinUI, ResourceDictionary resolution is performed through a graph traversal of MergedDictionaries, which generally implies that a worse case resolution can require as many lookups as there are dictionaries.
 
-To limit the impact of the traversal, this task task takes all resource dictionaries found in a specific MSBuild item group, and merges them into a single file. This file is then generally either named `Themes\Generic.xaml` or referenced as a merged dictionary from another `Themes\Generic.xaml` file.
+To limit the impact of the traversal, this task takes all resource dictionaries found in a specific MSBuild item group, and merges them into a single file. This file is then generally either named `Themes\Generic.xaml` or referenced as a merged dictionary from another `Themes\Generic.xaml` file.
 
 ## Using the task
 

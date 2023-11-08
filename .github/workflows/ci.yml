@@ -13,8 +13,8 @@ on:
       - release/**
 
 env:
-  UnoCheck_Version: '1.5.4'
-  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/34b1a60f5c1c51604b47362781969dde46979fd5/manifests/uno.ui-preview.manifest.json'
+  UnoCheck_Version: '1.14.1'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/146b0b4b23d866bef455494a12ad7ffd2f6f2d20/manifests/uno.ui.manifest.json'
 
 jobs:
   build:

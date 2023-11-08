@@ -4,7 +4,6 @@
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<LangVersion>10.0</LangVersion>
 		<TreatWarningsAsErrors>True</TreatWarningsAsErrors>
 		<IsTool>true</IsTool>
 		<AssemblyName>Uno.XamlMerge.Task.v0</AssemblyName>

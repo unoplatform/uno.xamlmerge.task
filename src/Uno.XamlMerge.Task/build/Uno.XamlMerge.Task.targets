@@ -15,6 +15,8 @@
 		<BatchMergeXaml_v0
 			ProjectFullPath="$(MSBuildProjectFullPath)"
 			Pages="@(XamlMergeInput)"
+			IsHotReloadEnabled="$(BatchMergeGenerateForHotReload)"
+			AssemblyName="$(AssemblyName)"
 			MergedXamlFiles="@(XamlMergeOutputFiles)" />
 		<Message Text="Merged resources XAML file was generated in $(XamlMergeOutputFile)" />
 
@@ -26,7 +28,7 @@
 			DependsOnTargets="_XamlMergeFillProperties">
 
 		<ItemGroup>
-			<Page Remove="@(XamlMergeInput)" />
+			<Page Remove="@(XamlMergeInput)" Condition="'$(BatchMergeGenerateForHotReload)' != 'true'" />
 		</ItemGroup>
 
 		<GeneratePageList_v0
@@ -42,6 +44,7 @@
 
 		<PropertyGroup>
 			<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'=='' and '@(XamlMergeOutputFiles)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>
+			<BatchMergeGenerateForHotReload Condition="'$(Configuration)' == 'Debug' and '$(BatchMergeGenerateForHotReload)'==''">true</BatchMergeGenerateForHotReload>
 		</PropertyGroup>
 
 		<Error Condition="'$(XamlMergeOutputFile)'!='' and '@(XamlMergeOutputFiles)'!=''"

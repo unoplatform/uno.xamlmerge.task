@@ -13,8 +13,8 @@ on:
       - release/**
 
 env:
-  UnoCheck_Version: '1.5.4'
-  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/34b1a60f5c1c51604b47362781969dde46979fd5/manifests/uno.ui-preview.manifest.json'
+  UnoCheck_Version: '1.14.1'
+  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/146b0b4b23d866bef455494a12ad7ffd2f6f2d20/manifests/uno.ui.manifest.json'
 
 jobs:
   build:
@@ -26,10 +26,10 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Setup .NET Core v6
+    - name: Setup .NET 7
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.401'
+        dotnet-version: '7.0.403'
 
     - name: Setup GitVersion
       uses: gittools/actions/gitversion/setup@v0.9.9
@@ -86,10 +86,10 @@ jobs:
       with:
         fetch-depth: 0
     
-    - name: Setup .NET Core v6
+    - name: Setup .NET 7
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.100'
+        dotnet-version: '7.0.403'
 
     - run: |
           & dotnet tool update --global uno.check --version ${{ env.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json

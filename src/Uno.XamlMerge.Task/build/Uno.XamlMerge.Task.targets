@@ -12,10 +12,6 @@
 			DependsOnTargets="_XamlMergeFillProperties"
 			Condition="'$(BuildingProject)' == 'true' or '$(DesignTimeBuild)' != 'true'">
 
-		<PropertyGroup>
-			<BatchMergeGenerateForHotReload Condition="'$(Configuration)' == 'Debug' and '$(BatchMergeGenerateForHotReload)'==''">true</BatchMergeGenerateForHotReload>
-		</PropertyGroup>
-
 		<BatchMergeXaml_v0
 			ProjectFullPath="$(MSBuildProjectFullPath)"
 			Pages="@(XamlMergeInput)"
@@ -30,6 +26,10 @@
 	<Target Name="_AdjustedMergedXamlItems"
 			BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile;GenerateMSBuildEditorConfigFileCore;_InjectAdditionalFiles"
 			DependsOnTargets="_XamlMergeFillProperties">
+
+		<PropertyGroup>
+			<BatchMergeGenerateForHotReload Condition="'$(Configuration)' == 'Debug' and '$(BatchMergeGenerateForHotReload)'==''">true</BatchMergeGenerateForHotReload>
+		</PropertyGroup>
 
 		<ItemGroup>
 			<Page Remove="@(XamlMergeInput)" Condition="'$(BatchMergeGenerateForHotReload)' != 'true'" />

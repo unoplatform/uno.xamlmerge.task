@@ -27,10 +27,6 @@
 			BeforeTargets="GetCopyToOutputDirectoryItems;BeforeBuild;BeforeCompile;GenerateMSBuildEditorConfigFileCore;_InjectAdditionalFiles"
 			DependsOnTargets="_XamlMergeFillProperties">
 
-		<PropertyGroup>
-			<BatchMergeGenerateForHotReload Condition="'$(Configuration)' == 'Debug' and '$(BatchMergeGenerateForHotReload)'==''">true</BatchMergeGenerateForHotReload>
-		</PropertyGroup>
-
 		<ItemGroup>
 			<Page Remove="@(XamlMergeInput)" Condition="'$(BatchMergeGenerateForHotReload)' != 'true'" />
 		</ItemGroup>
@@ -48,6 +44,7 @@
 
 		<PropertyGroup>
 			<XamlMergeOutputFile Condition="'$(XamlMergeOutputFile)'=='' and '@(XamlMergeOutputFiles)'==''">$(MSBuildProjectDirectory)\Generated\mergedpages.xaml</XamlMergeOutputFile>
+			<BatchMergeGenerateForHotReload Condition="'$(Configuration)' == 'Debug' and '$(BatchMergeGenerateForHotReload)'==''">true</BatchMergeGenerateForHotReload>
 		</PropertyGroup>
 
 		<Error Condition="'$(XamlMergeOutputFile)'!='' and '@(XamlMergeOutputFiles)'!=''"

@@ -1,4 +1,4 @@
-- name: Uno the Xaml Merge task
+- name: Using Uno.XamlMerge.Task
   topicHref: using-xamlmerge.md
-- name: Troubleshooting
+- name: Troubleshooting the Uno.XamlMerge.Task generation
   href: troubleshooting.md

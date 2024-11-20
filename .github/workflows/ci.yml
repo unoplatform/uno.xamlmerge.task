@@ -13,8 +13,7 @@ on:
       - release/**
 
 env:
-  UnoCheck_Version: '1.14.1'
-  UnoCheck_Manifest: 'https://raw.githubusercontent.com/unoplatform/uno.check/146b0b4b23d866bef455494a12ad7ffd2f6f2d20/manifests/uno.ui.manifest.json'
+  UnoCheck_Version: '1.27.2'
 
 jobs:
   build:
@@ -25,23 +24,11 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    
-    - name: Setup .NET 7
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '7.0.403'
 
-    - name: Setup GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.9
+    - uses: dotnet/nbgv@f088059084cb5d872e9d1a994433ca6440c2bf72 # v0.4.2
       with:
-        versionSpec: '5.x'
-
-    - name: GitVersion
-      id: gitversion
-      uses: gittools/actions/gitversion/execute@v0.9.9
-      with:
-        useConfigFile: true
-        configFilePath: build/gitversion.yml
+        toolVersion: 3.6.139
+        setAllVars: true
 
     - run: |
         npm install -g conventional-changelog-cli@2.2.2
@@ -50,21 +37,20 @@ jobs:
 
     - run: |
           & dotnet tool update --global uno.check --version ${{ env.UnoCheck_Version }} --add-source https://api.nuget.org/v3/index.json
-          & uno-check -v --ci --non-interactive --fix --skip xcode --skip androidemulator --skip gtk3 --skip vswin --skip vsmac --manifest ${{ env.UnoCheck_Manifest }}
+          & uno-check -v --ci --non-interactive --fix --skip xcode --skip androidemulator --skip gtk3 --skip vswin --skip vsmac
       name: Install .NET Workloads
 
 
     - name: Adjust msbuild task name
       run: |
         cd src
-        gci -r -File -Include *.cs,*.targets,*.props,*.csproj | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.sha }}" }  | set-content $a }
+        gci -r -File -Include *.cs,*.targets,*.props,*.csproj | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","$env:NBGV_GitCommitId" }  | set-content $a }
 
     - name: Build - CI
       run: |
-        gci -r -File -Include src\*.cs,src\*.targets,src\*.props | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","${{ steps.gitversion.outputs.sha }}" }  | set-content $a }
-        $adjustedPackageVersion="${{ steps.gitversion.outputs.semVer }}".ToLower();
+        gci -r -File -Include src\*.cs,src\*.targets,src\*.props | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","$env:NBGV_GitCommitId" }  | set-content $a }
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        & $msbuild /r /p:Configuration=Release /nr:false "/t:Build;Pack" /p:PackageVersion=$adjustedPackageVersion /p:Version=${{ steps.gitversion.outputs.assemblySemVer }} "/p:PackageOutputPath=$env:GITHUB_WORKSPACE\artifacts" "/p:PackageReleaseNotesFile=$env:GITHUB_WORKSPACE\build\changelog.md" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
+        & $msbuild /r /p:Configuration=Release /nr:false "/t:Build;Pack" /p:PackageVersion=$env:NBGV_SemVer2 /p:Version=$env:NBGV_SemVer2 "/p:InformationalVersion=$env:NBGV_SemVer2+$env:env.BuildingRef" "/p:PackageOutputPath=$env:GITHUB_WORKSPACE\artifacts" "/p:PackageReleaseNotesFile=$env:GITHUB_WORKSPACE\build\changelog.md" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
 
     - name: Run Unit Tests
       run: |

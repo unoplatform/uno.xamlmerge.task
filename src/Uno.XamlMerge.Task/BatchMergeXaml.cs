@@ -32,6 +32,9 @@ namespace Uno.UI.Tasks.BatchMerge
         [Required]
         public string AssemblyName { get; set; }
 
+        [Required]
+        public string OutputType { get; set; }
+
         public bool IsHotReloadEnabled { get; set; }
 
         [Output]
@@ -100,8 +103,14 @@ namespace Uno.UI.Tasks.BatchMerge
             foreach (var page in filteredPages)
             {
                 var pagePath = Path.GetFullPath(page.ItemSpec).Replace(projectBasePath, "").TrimStart(Path.DirectorySeparatorChar).Replace('\\', '/');
+
+                var assemblyNameInUrl = 
+                    OutputType.Equals("exe", StringComparison.OrdinalIgnoreCase) || OutputType.Equals("winexe", StringComparison.OrdinalIgnoreCase)
+                    ? "" // We're in the main assembly, the ms-appx should not contain the assembly name
+                    : $"{AssemblyName}/";
+
                 builder.Append($"""
-                                    <ResourceDictionary Source="ms-appx:///{AssemblyName}/{pagePath}" />
+                                    <ResourceDictionary Source="ms-appx:///{assemblyNameInUrl}{pagePath}" />
 
                             """);
             }

@@ -1,32 +1,34 @@
 <Project ToolsVersion="15.0">
 
-  <PropertyGroup>
-    <Authors>unoplatform</Authors>
-    <LangVersion>11</LangVersion>
-    <PackageProjectUrl>https://github.com/unoplatform/uno.xamlmerge.task</PackageProjectUrl>
-    <PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/unoplatform/uno.xamlmerge.task</RepositoryUrl>
+	<PropertyGroup>
+		<Authors>unoplatform</Authors>
+		<LangVersion>11</LangVersion>
+		<PackageProjectUrl>https://github.com/unoplatform/uno.xamlmerge.task</PackageProjectUrl>
+		<PackageIconUrl>https://nv-assets.azurewebsites.net/logos/uno.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/unoplatform/uno.xamlmerge.task</RepositoryUrl>
 		<RepositoryUrl>$(BUILD_REPOSITORY_URI)</RepositoryUrl>
 		<Copyright>Copyright (C) 2015-$([System.DateTime]::Now.ToString(`yyyy`)) uno platform inc. - all rights reserved</Copyright>
 		<Product>$(AssemblyName) ($(TargetFramework))</Product>
 		<PackageIcon>uno-logo.png</PackageIcon>
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+
+		<NoWarn>$(NoWarn);NU1902;NU1903;NU1904</NoWarn>
 	</PropertyGroup>
-	
+
 	<PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
 		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 	</PropertyGroup>
-	
+
 	<PropertyGroup>
 		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">true</GeneratePackageOnBuild>
 		<IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
 		<IsSampleProject>$(MSBuildProjectName.Contains('Sample'))</IsSampleProject>
 	</PropertyGroup>
-	
+
 	<ItemGroup>
 		<None Include="$(MSBuildThisFileDirectory)..\build\uno-logo.png" Pack="true" Visible="false" PackagePath="\"/>
 	</ItemGroup>
-	
+
 	<Choose>
 		<When Condition="'$(IsTestProject)' != 'true' and '$(SourceLinkEnabled)' != 'false' and '$(IsSampleProject)' != 'true'">
 			<PropertyGroup>

@@ -8,6 +8,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 
+		<!-- https://github.com/unoplatform/uno/issues/18860 -->
+		<IsBrowserWasmProject>false</IsBrowserWasmProject>
 	</PropertyGroup>
 
 	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />

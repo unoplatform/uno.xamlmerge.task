@@ -50,7 +50,7 @@ jobs:
       run: |
         gci -r -File -Include src\*.cs,src\*.targets,src\*.props | foreach-object { $a = $_.fullname; ( get-content $a ) | foreach-object { $_ -replace "v0","$env:NBGV_GitCommitId" }  | set-content $a }
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        & $msbuild /r /p:Configuration=Release /nr:false "/t:Build;Pack" /p:PackageVersion=$env:NBGV_SemVer2 /p:Version=$env:NBGV_SemVer2 "/p:InformationalVersion=$env:NBGV_SemVer2+$env:env.BuildingRef" "/p:PackageOutputPath=$env:GITHUB_WORKSPACE\artifacts" "/p:PackageReleaseNotesFile=$env:GITHUB_WORKSPACE\build\changelog.md" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
+        & $msbuild /r /v:m /p:Configuration=Release /nr:false "/t:Build;Pack" /p:PackageVersion=$env:NBGV_SemVer2 /p:Version=$env:NBGV_SemVer2 "/p:InformationalVersion=$env:NBGV_SemVer2+$env:env.BuildingRef" "/p:PackageOutputPath=$env:GITHUB_WORKSPACE\artifacts" "/p:PackageReleaseNotesFile=$env:GITHUB_WORKSPACE\build\changelog.md" src\Uno.XamlMerge.Task\Uno.XamlMerge.Task.csproj
 
     - name: Run Unit Tests
       run: |
@@ -85,7 +85,7 @@ jobs:
     - name: Validate Test Projects
       run: |
         $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe
-        & $msbuild /m /nr:false /r /p:Configuration=Release build\Uno.XamlMerge.Task-ci-only.slnf /p:AppxPackageSigningEnabled=false /p:AotAssemblies=false /p:WasmShellILLinkerEnabled=false
+        & $msbuild /m /v:m /nr:false /r /p:Configuration=Release build\Uno.XamlMerge.Task-ci-only.slnf /p:AppxPackageSigningEnabled=false /p:AotAssemblies=false /p:WasmShellILLinkerEnabled=false
 
   publish:
     name: Publish

@@ -30,7 +30,17 @@ public class Given_BatchMergeXaml
     [TestMethod]
     public void When_HR_Enabled()
     {
-        var task = CreateMerger(isHotReloadEnabled: true);
+        var task = CreateMerger(isHotReloadEnabled: true, isMainAssembly: false);
+
+        Assert.IsTrue(task.Execute());
+
+        ValidateOutput(task);
+    }
+
+    [TestMethod]
+    public void When_HR_Enabled_Main_App()
+    {
+        var task = CreateMerger(isHotReloadEnabled: true, isMainAssembly: true);
 
         Assert.IsTrue(task.Execute());
 
@@ -334,7 +344,7 @@ public class Given_BatchMergeXaml
         }
     }
 
-    private BatchMergeXaml_v0 CreateMerger(bool isHotReloadEnabled = false, [CallerMemberName] string testName = "")
+    private BatchMergeXaml_v0 CreateMerger(bool isHotReloadEnabled = false, bool isMainAssembly = false, [CallerMemberName] string testName = "")
     {
         var basePath = GetBasePath(testName);
 
@@ -376,6 +386,7 @@ public class Given_BatchMergeXaml
             .ToArray();
         task.IsHotReloadEnabled = isHotReloadEnabled;
         task.AssemblyName = "TestAssemblyName";
+        task.OutputType = isMainAssembly ? "Exe" : "Library";
         return task;
     }
 

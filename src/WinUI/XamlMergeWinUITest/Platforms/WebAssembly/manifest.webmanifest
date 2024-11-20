@@ -1,0 +1,10 @@
+{
+  "background_color": "#ffffff",
+  "description": "XamlMergeWinUITest",
+  "display": "standalone",
+  "name": "XamlMergeWinUITest",
+  "short_name": "XamlMergeWinUITest",
+  "start_url": "/index.html",
+  "theme_color": "#ffffff",
+  "scope": "/"
+}

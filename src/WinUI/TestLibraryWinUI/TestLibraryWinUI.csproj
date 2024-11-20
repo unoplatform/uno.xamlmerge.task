@@ -1,37 +1,14 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Uno.Sdk/5.5.43">
 	<PropertyGroup>
-		<TargetFrameworks>net6.0-windows10.0.18362;netstandard2.0;net6.0-ios;net6.0-macos;net6.0-maccatalyst;net6.0-android</TargetFrameworks>
+		<TargetFrameworks>net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-android;net9.0-windows10.0.26100;net9.0-browserwasm;net9.0-desktop</TargetFrameworks>
+		<UnoSingleProject>true</UnoSingleProject>
+		<OutputType>Library</OutputType>
 		<!-- Ensures the .xr.xml files are generated in a proper layout folder -->
 		<GenerateLibraryLayout>true</GenerateLibraryLayout>
-	</PropertyGroup>
-	
-	<ItemGroup Condition="'$(TargetFramework)'=='net6.0-windows10.0.18362'">
-		<PackageReference Include="Microsoft.WindowsAppSDK" Version="1.1.3" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.22000.24" />
-		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.22000.24" />
-	</ItemGroup>
-	
-	<ItemGroup Condition="'$(TargetFramework)'!='net6.0-windows10.0.18362'">
-		<PackageReference Include="Uno.WinUI" Version="4.6.19" />
-	</ItemGroup>
-	
-	<ItemGroup Condition="'$(TargetFramework)'!='net6.0-windows10.0.18362'">
-		<Content Include="Assets\**" />
-		<Page Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-		<Compile Update="**\*.xaml.cs">
-			<DependentUpon>%(Filename)</DependentUpon>
-		</Compile>
-	</ItemGroup>
-	
-	<ItemGroup>
-		<UpToDateCheckInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml" />
-	</ItemGroup>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
 
-	<ItemGroup>
-		<XamlMergeOutputFiles Include="$(BaseIntermediateOutputPath)\Generated\mergedpages01.xaml" />
-		<XamlMergeOutputFiles Include="$(BaseIntermediateOutputPath)\Generated\mergedpages02.xaml" />
-		<XamlMergeInput Include="**\*.xaml" Exclude="bin\**\*.xaml;obj\**\*.xaml;Themes\Generic.xaml" MergeFile="mergedpages01.xaml" />
-	</ItemGroup>
+	</PropertyGroup>
 
 	<Import Project="..\..\Uno.XamlMerge.Task\build\Uno.XamlMerge.Task.targets" />
 

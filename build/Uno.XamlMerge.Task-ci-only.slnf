@@ -2,21 +2,9 @@
   "solution": {
     "path": "..\\src\\Uno.XamlMerge.Task.sln",
     "projects": [
-      "UWP\\TestLibrarySingleFile\\TestLibrarySingleFile.csproj",
-      "UWP\\TestLibrary\\TestLibrary.csproj",
-      "UWP\\XamlMergeUWPTest\\XamlMergeUWPTest.Droid\\XamlMergeUWPTest.Droid.csproj",
-      "UWP\\XamlMergeUWPTest\\XamlMergeUWPTest.Shared\\XamlMergeUWPTest.Shared.shproj",
-      "UWP\\XamlMergeUWPTest\\XamlMergeUWPTest.Skia.Gtk\\XamlMergeUWPTest.Skia.Gtk.csproj",
-      "UWP\\XamlMergeUWPTest\\XamlMergeUWPTest.UWP\\XamlMergeUWPTest.UWP.csproj",
-      "UWP\\XamlMergeUWPTest\\XamlMergeUWPTest.Wasm\\XamlMergeUWPTest.Wasm.csproj",
-      "UWP\\XamlMergeUWPTest\\XamlMergeUWPTest.iOS\\XamlMergeUWPTest.iOS.csproj",
       "Uno.XamlMerge.Task\\Uno.XamlMerge.Task.csproj",
       "Uno.XamlMerge.Tests\\Uno.XamlMerge.Tests.csproj",
-      "WinUI\\TestLibraryWinUI\\TestLibraryWinUI.csproj",
-      "WinUI\\XamlMergeWinUITest.Mobile\\XamlMergeWinUITest.Mobile.csproj",
-      "WinUI\\XamlMergeWinUITest.Shared\\XamlMergeWinUITest.Shared.shproj",
-      "WinUI\\XamlMergeWinUITest.Skia.Gtk\\XamlMergeWinUITest.Skia.Gtk.csproj",
-      "WinUI\\XamlMergeWinUITest.Wasm\\XamlMergeWinUITest.Wasm.csproj"
+      "WinUI\\TestLibraryWinUI\\TestLibraryWinUI.csproj"
     ]
   }
 }

@@ -12,16 +12,37 @@ To limit the impact of the traversal, this task takes all resource dictionaries 
 
 ## Using the task
 
-1. In your `csproj` file, include the following block:
+1. Add a package reference:
 
-    ```xml
-    <PropertyGroup>
-      <_Uno_XamlMerge_Task_Version>1.0.0</_Uno_XamlMerge_Task_Version>
-    </PropertyGroup>
-    <ItemGroup>
-      <PackageReference Include="Uno.XamlMerge.Task" Version="$(_Uno_XamlMerge_Task_Version)" />
-    </ItemGroup>
-    ```
+    * If your project does not use [Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management#enabling-central-package-management), in your `csproj` file, include the following block:
+
+      ```xml
+      <PropertyGroup>
+        <_Uno_XamlMerge_Task_Version>1.0.0</_Uno_XamlMerge_Task_Version>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageReference Include="Uno.XamlMerge.Task" Version="$(_Uno_XamlMerge_Task_Version)" />
+      </ItemGroup>
+      ```
+
+    * If your project is using [Central Package Management](https://learn.microsoft.com/en-us/nuget/consume-packages/Central-Package-Management#enabling-central-package-management), add the following to your `Directory.Packages.props`:
+
+      ```xml
+      <PropertyGroup>
+        <_Uno_XamlMerge_Task_Version>1.0.0</_Uno_XamlMerge_Task_Version>
+      </PropertyGroup>
+      <ItemGroup>
+        <PackageVersion Include="Uno.XamlMerge.Task" Version="$(_Uno_XamlMerge_Task_Version)" />
+      </ItemGroup>
+      ```
+
+      Then the following to your `.csproj`:
+
+      ```xml
+      <ItemGroup>
+        <PackageVersion Include="Uno.XamlMerge.Task" Version="$(_Uno_XamlMerge_Task_Version)" />
+      </ItemGroup>
+      ```
 
 1. Specify the resource dictionaries to be merged:
 
@@ -62,6 +83,8 @@ To limit the impact of the traversal, this task takes all resource dictionaries 
         </ResourceDictionary.MergedDictionaries>
     </ResourceDictionary>
     ```
+
+    Then replace `REPLACE_ME/` with either the library name if you're adding the package to a class library, or with nothing if you're adding it to your main project (e.g. `ms-appx:///Generated/mergedpages.xaml`).
 
 ## Multiple generated files
 

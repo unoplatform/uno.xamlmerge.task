@@ -48,6 +48,22 @@ public class Given_BatchMergeXaml
     }
 
     [TestMethod]
+    public void When_HR_Enabled_Main_App_No_Overwrite()
+    {
+        var task = CreateMerger(isHotReloadEnabled: true, isMainAssembly: true);
+
+        Assert.IsTrue(task.Execute());
+
+        var originalFiles = task.MergedXamlFiles.Select(f => new FileInfo(f.ItemSpec).LastWriteTimeUtc).ToArray();
+
+        Assert.IsTrue(task.Execute());
+
+        var newFiles = task.MergedXamlFiles.Select(f => new FileInfo(f.ItemSpec).LastWriteTimeUtc).ToArray();
+
+        Assert.IsTrue(originalFiles.SequenceEqual(newFiles));
+    }
+
+    [TestMethod]
     public void When_Key_TargeType_Conflict()
     {
         var task = CreateMerger();
@@ -106,7 +122,6 @@ public class Given_BatchMergeXaml
 
         ValidateOutput(task);
     }
-
 
     [TestMethod]
     public void When_Duplicate_ThemeResources_With_Ignored_Prefix()

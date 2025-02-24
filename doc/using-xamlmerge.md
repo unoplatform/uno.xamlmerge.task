@@ -65,9 +65,9 @@ To limit the impact of the traversal, this task takes all resource dictionaries 
 1. By default, the generated file is called `Generated\mergedpages.xaml`, but can be overridden as follows:
 
     ```xml
-    <PropertyGroup>
-      <XamlMergeOutputFile>Themes\Generic.xaml</XamlMergeOutputFile>
-    </PropertyGroup>
+    <ItemGroup>
+      <XamlMergeOutputFiles Include="Themes\Generic.xaml" />
+    </ItemGroup>
     ```
 
 1. The generated file can be referenced as follows:
@@ -85,6 +85,18 @@ To limit the impact of the traversal, this task takes all resource dictionaries 
     ```
 
     Then replace `REPLACE_ME/` with either the library name if you're adding the package to a class library, or with nothing if you're adding it to your main project (e.g. `ms-appx:///Generated/mergedpages.xaml`).
+
+1. If your project is multi-targeted and that your set of input files is different for each target, the output file for each target must be placed in the intermediate output to avoid breaking the incremental compilation:
+
+    ```xml
+    <ItemGroup>
+      <XamlMergeOutputFiles
+        Include="$(IntermediateOutputPath)\Themes\Generic.xaml"
+        Link="Themes\Generic.xaml" />
+    </ItemGroup>
+    ```
+
+    The `Link` value is the path that can be used in the `ResourceDictionary.Source` property.
 
 ## Multiple generated files
 

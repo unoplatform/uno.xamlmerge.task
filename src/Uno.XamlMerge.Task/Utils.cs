@@ -123,6 +123,7 @@ namespace Uno.UI.Tasks.BatchMerge
                 }
                 catch (UnauthorizedAccessException)
                 {
+                    // Same: leaving the temporary file behind is preferable to masking the failure above.
                 }
             }
         }

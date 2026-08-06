@@ -14,6 +14,12 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Uno.XamlMerge.Tests</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
+	<ItemGroup>
 		<None Include="build\_._" Pack="true" PackagePath="lib/$(TargetFramework)" />
 		<None Include="build\Uno.XamlMerge.Task.targets" Pack="true" PackagePath="build" />
 		<None Include="..\..\README.md" Pack="true" PackagePath="/" />

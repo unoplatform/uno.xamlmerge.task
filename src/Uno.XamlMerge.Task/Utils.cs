@@ -61,7 +61,7 @@ namespace Uno.UI.Tasks.BatchMerge
 
                     if (rewrite)
                     {
-                        File.WriteAllText(fullPath, contents);
+                        WriteAtomically(fullPath, contents);
                     }
 
                     return fullPath;
@@ -76,6 +76,56 @@ namespace Uno.UI.Tasks.BatchMerge
             }
 
             throw new InvalidOperationException($"Failed to write file {path}: {lastException}");
+        }
+
+        /// <summary>
+        /// Writes to a temporary file and swaps it into place, so the destination is replaced
+        /// whole rather than truncated and refilled.
+        /// </summary>
+        /// <remarks>
+        /// Cross-targeting variants of a project can share one merged output path, so the file
+        /// may be read (by the XAML source generator) while another variant rewrites it. Writing
+        /// in place exposes the truncated intermediate state and holds the destination open for
+        /// the whole write; the swap keeps that window to a single rename.
+        /// </remarks>
+        private static void WriteAtomically(string fullPath, string contents)
+        {
+            // Same directory as the destination, so the swap stays within one volume.
+            var temporaryPath = fullPath + "." + Guid.NewGuid().ToString("N") + ".tmp";
+
+            try
+            {
+                File.WriteAllText(temporaryPath, contents);
+
+                if (File.Exists(fullPath))
+                {
+                    File.Replace(temporaryPath, fullPath, destinationBackupFileName: null, ignoreMetadataErrors: true);
+                }
+                else
+                {
+                    File.Move(temporaryPath, fullPath);
+                }
+            }
+            finally
+            {
+                // A failed Replace/Move leaves the temporary file behind; it must not be
+                // picked up by globs over the output directory.
+                try
+                {
+                    if (File.Exists(temporaryPath))
+                    {
+                        File.Delete(temporaryPath);
+                    }
+                }
+                catch (IOException)
+                {
+                    // Best effort: the caller is already retrying, or propagating the original failure.
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // Same: leaving the temporary file behind is preferable to masking the failure above.
+                }
+            }
         }
     }
 }

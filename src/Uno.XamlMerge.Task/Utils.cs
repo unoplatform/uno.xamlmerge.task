@@ -117,7 +117,11 @@ namespace Uno.UI.Tasks.BatchMerge
                         File.Delete(temporaryPath);
                     }
                 }
-                catch
+                catch (IOException)
+                {
+                    // Best effort: the caller is already retrying, or propagating the original failure.
+                }
+                catch (UnauthorizedAccessException)
                 {
                 }
             }

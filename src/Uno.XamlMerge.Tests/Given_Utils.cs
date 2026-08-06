@@ -12,7 +12,9 @@ public class Given_Utils
 {
     private string CreateScratchFolder([System.Runtime.CompilerServices.CallerMemberName] string name = "")
     {
-        var path = Path.Combine(Path.GetTempPath(), "Uno.XamlMerge.Tests", name + "-" + Guid.NewGuid().ToString("N"));
+        // GetFileName keeps the caller-member name a bare name, so it can never root the combine.
+        var safeName = Path.GetFileName(name);
+        var path = Path.Combine(Path.GetTempPath(), "Uno.XamlMerge.Tests", safeName + "-" + Guid.NewGuid().ToString("N"));
         Directory.CreateDirectory(path);
         return path;
     }
@@ -35,12 +37,15 @@ public class Given_Utils
         var target = Path.Combine(folder, "merged.xaml");
 
         Utils.RewriteFileIfNecessary(target, "hello");
-        var firstWrite = File.GetLastWriteTimeUtc(target);
 
-        Thread.Sleep(50);
+        // A sentinel rather than the real write time: any rewrite moves the timestamp to "now",
+        // which is detectable regardless of the file system's timestamp resolution.
+        var sentinel = new DateTime(2001, 2, 3, 4, 5, 6, DateTimeKind.Utc);
+        File.SetLastWriteTimeUtc(target, sentinel);
+
         Utils.RewriteFileIfNecessary(target, "hello");
 
-        Assert.AreEqual(firstWrite, File.GetLastWriteTimeUtc(target), "An unchanged merge must not rewrite the shared output.");
+        Assert.AreEqual(sentinel, File.GetLastWriteTimeUtc(target), "An unchanged merge must not rewrite the shared output.");
     }
 
     [TestMethod]
@@ -73,8 +78,9 @@ public class Given_Utils
         Utils.RewriteFileIfNecessary(target, contentA);
 
         using var stop = new CancellationTokenSource();
-        string? partial = null;
 
+        // The reader returns its result rather than assigning a captured local, so awaiting the
+        // task is what publishes it to this thread.
         var reader = System.Threading.Tasks.Task.Run(() =>
         {
             while (!stop.IsCancellationRequested)
@@ -100,19 +106,23 @@ public class Given_Utils
 
                 if (observed != contentA && observed != contentB)
                 {
-                    partial = $"length {observed.Length}, expected {contentA.Length}";
-                    return;
+                    return $"length {observed.Length}, expected {contentA.Length}";
                 }
             }
+
+            return null;
         });
 
-        for (var i = 0; i < 20 && partial is null; i++)
+        for (var i = 0; i < 20; i++)
         {
             Utils.RewriteFileIfNecessary(target, i % 2 == 0 ? contentB : contentA);
         }
 
         stop.Cancel();
-        reader.Wait(TimeSpan.FromSeconds(30));
+
+        Assert.IsTrue(reader.Wait(TimeSpan.FromSeconds(30)), "The reader did not stop within the timeout.");
+
+        var partial = reader.Result;
 
         Assert.IsNull(partial, $"A concurrent reader observed a partially written file ({partial}).");
     }
